@@ -61,7 +61,20 @@
 	$contribution 	= $_POST['contribution'];
 	$work_1 		= $_POST['work_1'];
 	$desc 			= $_POST['desc'];
-	$weighted_perf  = $factor_1 * $work_1;
+	$weighted_perf  = $factor_1 * $work_1;	
+	
+	$selected_receiver = null;
+	$selected_service  = null;
+	
+	if (isset($_POST['user_2']))
+	{
+		$selected_receiver = $_POST['user_2'];
+	}
+	if (isset($_POST['contribution']))
+	{
+		$selected_service = $_POST['contribution'];
+	}
+	
 	
 	$sql = "SELECT service FROM uwsservices";
 	$query = mysql_query($sql);
@@ -98,10 +111,17 @@
           <td width="50" class="text"><?php echo translate("uws:receiver") ?></td>
           <td width="5">&nbsp;</td>
           <td><span class="text">
-          <select name"user_2" size="1">
+          <select name="user_2" size="1">
              <?php
-             foreach ($user_list as $user) {
-             	echo "<option>" . $user ."</option";
+             foreach ($user_list as $user) {             	
+             	echo "<option";
+             	if (! strcmp($user,$selected_receiver)) {
+             		echo " selected>";
+             	}
+             	else {
+             		echo ">";
+             	} 
+             	echo $user ."</option";
              }
              ?>
              </select>
@@ -118,10 +138,17 @@
           <td width="5">&nbsp;</td>
           <td><span class="text">
              <!-- <input name="contribution" type="text" id="contribution" value="<?php echo $contribution?>" size="30" /> -->
-             <select name"contribution" size="1">
+             <select name="contribution" size="1">
              <?php
              foreach ($services_list as $service) {
-             	echo "<option>" . $service ."</option";
+             	echo "<option";
+             	if (! strcmp($service,$selected_service)) {
+             		echo " selected>";
+             	}
+             	else {
+             		echo ">";
+             	} 
+             	echo $service ."</option";
              }
              ?>
              </select>

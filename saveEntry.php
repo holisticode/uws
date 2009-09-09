@@ -1,17 +1,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <?php
+	
+	include "config.php";
 
 	$contribution 	= $_POST['contribution'];
 	$desc 			= $_POST['desc'];
-	$user	 		= $_POST['user'];
+	$user	 		= $_POST['user_1'];
 	$receiver 		= $_POST['user_2'];
 	$factor 		= $_POST['factor_1'];
 	$work	 		= $_POST['work_1'];
 	$weighted_perf 	= $_POST['weighted_perf'];
 	$storyLink 		= $_POST['storyLink'];
-
-	include "config.php";
+	
 	
 	//first check that the service exists; if not: add
 	//TODO: Check if user exists?
@@ -35,11 +36,12 @@
 	
 	$date = time();
 	$query = "INSERT into uwsservice values ('','$date','$user','$contribution','$desc','$work','$factor','')";
-	//echo $query;
+	//print $query;
 	$result = mysql_query($query);
 	if (!$result) {
 		print("Query failed: " . mysql_error());
 	} else {
+		//print "Query OK";
 		$user_1_journal_id = mysql_insert_id();
 		
 		if ($receiver != "" || $receiver != null)
