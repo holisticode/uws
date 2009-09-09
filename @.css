@@ -1,0 +1,59 @@
+body	{ font-family:Verdana; background-color:#000000; color:#FFFF00; margin-left:30px; margin-right:30px; margin-top:10px; }
+
+a:link        	{  color:#00FF00; text-decoration:none }
+a:visited    	{  color:#FF0000; text-decoration:none }
+a:hover     	{  color:#FF00FF; text-decoration:none }
+a:active    	{  color:#80FF80; text-decoration:none }
+a:focus     	{  color:#FFFFFF; text-decoration:none }
+
+h1	{  color:teal; }
+h2	{  color:teal; }
+h3	{  color:teal; }
+h4	{  color:teal; }
+h5	{  color:teal; }
+h6	{  }
+
+cite	{  font-style:normal; color:#FF9900; }
+code {  font-style:normal; color:#FFFFFF; }
+.unicode  {  font-style:normal; color:#FFFFFF; }
+.kursiv { font-style:italic; }
+
+.Willi         	{ color:#FF33FF; margin-top:12px; margin-bottom:12px; }
+.Zeronada      	{ color:#FF6699; margin-top:12px; margin-bottom:12px; }
+.Lubor        	{ color:#9933FF; margin-top:12px; margin-bottom:12px; }
+.Fritz        	{ font-style:italic; color:#00FF99; margin-top:12px; margin-bottom:12px; }
+.Rene      	{ color:#77C1FF; margin-top:12px; margin-bottom:12px; }
+.Thomas      	{ color:#661199; margin-top:12px; margin-bottom:12px; }
+.Francis         { color:#3300FF; margin-top:12px; margin-bottom:12px; }
+.Kabo        	{ color:#33CCFF; margin-top:12px; margin-bottom:12px; }
+.Karbo        	{ color:#33CCFF; margin-top:12px; margin-bottom:12px; }
+.info         	{ color:#16C7AA; margin-top:12px; margin-bottom:12px; }
+.Luzi         	{ color:#aa80FF; margin-top:12px; margin-bottom:12px; }
+.BdL         	{ color:#16C7FF; margin-top:12px; margin-bottom:12px; }
+.Deu         	{ color:#1611FF; margin-top:12px; margin-bottom:12px; }
+.Quelle      	{ color:#1611FF; margin-top:12px; margin-bottom:12px; }
+.Romo       	{ color:#16C7AA; margin-top:12px; margin-bottom:12px; }
+.Wesney    	{ color:#FF0066; margin-top:12px; margin-bottom:12px; }
+.Winny      	{ color:#bb1100; margin-top:12px; margin-bottom:12px; }
+.Cristina    	{ color:#990033; margin-top:12px; margin-bottom:12px; }
+.Alexander 	{ color:#FFFF02; margin-top:12px; margin-bottom:12px; }
+.Maria 		{ color:#CCFF33; margin-top:12px; margin-bottom:12px; }
+.Markus	        { color:#CC0033; margin-top:12px; margin-bottom:12px; }
+.Christoph	{ color:#666633; margin-top:12px; margin-bottom:12px; }
+.Alexandra	{ color:#FF6699; margin-top:12px; margin-bottom:12px; }
+.Samuel	        { color:#FF0066; margin-top:12px; margin-bottom:12px; }
+.Stefan	        { color:#FF0066; margin-top:12px; margin-bottom:12px; }
+.Marcilio	        { color:#00CC99; margin-top:12px; margin-bottom:12px; }
+.Waldson        	{ color:#00FF00; margin-top:12px; margin-bottom:12px; }
+.Andere1        	{ color:#66FF66; margin-top:12px; margin-bottom:12px; }
+.Andere2        	{ color:#3333CC; margin-top:12px; margin-bottom:12px; }
+.Andere3        	{ color:#0099CC; margin-top:12px; margin-bottom:12px; }
+.Marco        	{ color:#0099CC; margin-top:12px; margin-bottom:12px; }
+.Statist1	        { color:#FF99CC; margin-top:12px; margin-bottom:12px; }
+.Statist2	        { color:#66CC99; margin-top:12px; margin-bottom:12px; }
+.Simoni	        { color:#bbCC99; margin-top:12px; margin-bottom:12px; }
+.Statist3	        { color:#66FF66; margin-top:12px; margin-bottom:12px; }
+.Statist4	        { color:#33FFFF; margin-top:12px; margin-bottom:12px; }
+.Tatcha	        { color:#FF3333; margin-top:12px; margin-bottom:12px; }
+.Peter	        { color:#FF6666; margin-top:12px; margin-bottom:12px; }
+.Fablife	{ color:#33CC99; margin-top:12px; margin-bottom:12px; }

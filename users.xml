@@ -1,0 +1,27 @@
+<chart>
+	<chart_data>
+		<row>
+			<null/>
+			<string>Zeronada</string>
+			<string>Peter</string>
+			<string>Maria Franziska</string>
+			<string>Thomas</string>
+			<string>Reto</string>
+			<string>Lubor</string>
+			<string>Fablife</string>
+			<string>Fridufritz</string>
+		</row>
+		<row>
+			<string>% of Total Services</string>
+			<number>32.701</number>
+			<number>23.291</number>
+			<number>0</number>
+			<number>0</number>
+			<number>0.004</number>
+			<number>0.162</number>
+			<number>43.757</number>
+			<number>0.085</number>
+		</row>
+	</chart_data>
+	<chart_type>Pie</chart_type>
+</chart>
