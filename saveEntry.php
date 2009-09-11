@@ -47,6 +47,10 @@
 		if ($receiver != "" || $receiver != null)
 		{
 			$query = "UPDATE uwscontributors SET balance=balance - $weighted_perf where contributor='$receiver'";
+			$result = mysql_query($query);
+			if (!$result) {
+				print("Query failed: " . mysql_error());
+			}
 		}
 	}
 
