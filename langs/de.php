@@ -51,6 +51,7 @@
 		'uws:physical' => 'Reale Menge',
 		'uws:value' => 'Wert',
 		'uws:unit' => 'Einheit',
+		'uws:amount' => 'Menge',
 		'uws:inventory' => 'Verfügbares Inventar (in IE)',
 		'uws:inventory_val' => 'Investitions-Wert',
 		'uws:calc_weighted_val' => 'Gewichteten Wert errechnen',

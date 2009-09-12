@@ -35,4 +35,23 @@ function include_all_once ($pattern) {
 }
 
 include_all_once('langs/*.php');
+
+// include class
+include("Log.php");
+
+// create Log object
+$logger = &Log::singleton("file", "uws.log");
+
+/*
+$priorities = array(
+            PEAR_LOG_EMERG   => 'emergency',
+            PEAR_LOG_ALERT   => 'alert',
+            PEAR_LOG_CRIT    => 'critical',
+            PEAR_LOG_ERR     => 'error',
+            PEAR_LOG_WARNING => 'warning',
+            PEAR_LOG_NOTICE  => 'notice',
+            PEAR_LOG_INFO    => 'info',
+            PEAR_LOG_DEBUG   => 'debug'
+        );
+*/
 ?>

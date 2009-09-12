@@ -123,42 +123,116 @@
  <table class="nicetablelarge" cellspacing="0">
    <tr>
         <th scope="col" abbr="Date"><?php echo translate("uws:date") ?></th>
-        <th scope="col" abbr="Service delivered"><?php echo translate("uws:service") ?></th>
+        <th scope="col" abbr="Service"><?php echo translate("uws:service") ?></th>
+        <th scope="col" abbr="Unit"><?php echo translate("uws:asset") ?></th>
         <th scope="col" abbr="Description"><?php echo translate("uws:desc") ?></th>
         <th scope="col" abbr="Time"><?php echo translate("uws:time") ?></th>
+        <th scope="col" abbr="Amount"><?php echo translate("uws:amount") ?></th>
         <th scope="col" abbr="Factor"><?php echo translate("uws:factor") ?></th>
+        <th scope="col" abbr="Price"><?php echo translate("uws:price") ?></th>
+        <th scope="col" abbr="Balance"><?php echo translate("uws:balance") ?></th>
         <th scope="col" abbr="Link"><?php echo translate("uws:link") ?></th>
    </tr>
 
 
 <?php
-   $sql = ("SELECT * from uwsservice where contributor = '$username'");
-   $query = mysql_query($sql);
-   $cnt=0;
-   $tdnorm = '<td class="spec">';
-   $tdalt  = '<td class="specalt">';
-   $td = $tdnorm;
-   while ($result = mysql_fetch_array($query)) {
-	if ($cnt%2 == 0) {
-		$td = $tdnorm;
-	} else {
-		$td = $tdalt;
+/*
+	$service_entries = array();
+	$inventorize_entries = array();
+	$consume_entries = array();
+	
+	$sql = ("SELECT * from uwsservice where contributor = '$username'");
+   	$query = mysql_query($sql);
+   	
+   	while ($result = mysql_fetch_array($query)) {
+   		array_push($service_entries, $result);
+   		//print_r($result);
+   	}
+   	//print_r($service_entries);
+   	$sql = ("SELECT * from uwsinventorize where contributor = '$username'");
+   	$query = mysql_query($sql);
+   	while ($result = mysql_fetch_array($query)) {
+   		//array_push($inventorize_entries, current($result));
+   		array_push($inventorize_entries, $result);
+   	}
+   	print "<hr>";
+   	//print_r($inventorize_entries);
+   	$sql = ("SELECT * from uwsconsume where contributor = '$username'");
+   	$query = mysql_query($sql);
+   	while ($result = mysql_fetch_array($query)) {
+   		//array_push($consume_entries, current($result));
+   		array_push($consume_entries, $result);
+   		
+   	}
+   	
+   	print "<hr>";
+   	//print_r($consume_entries);   	  
+   	 */
+   	 
+   	$sql = "select journalID,date,contributor,uwsservice,description,lifetime,factor,link," .
+   				"null as uwsunit,null as amount,null as price from uwsservice where contributor='$username' union ".
+   		   "select journalID,date,contributor,null,description,null,factor,link,uwsunit,amount,null ".
+   		        "as invent from uwsinventorize where contributor='$username'  union ".
+   		   "select journalID,date,contributor,null,description,null,factor,link,uwsunit,amount,price ".
+   		   		"as consume from uwsconsume where contributor='$username' order by date";
+   	$query = mysql_query($sql);
+   	
+   	 
+   	$cnt=0;
+   	$tdnorm = '<td class="spec">';
+   	$tdalt  = '<td class="specalt">';
+   	$td = $tdnorm;
+   	
+   	//$all_transactions = array_merge($service_entries, $inventorize_entries, $consume_entries);
+   	//print_r($all_transactions);
+  
+	// Obtain a list of columns
+	/*foreach ($all_transactions as $key => $row) {
+    	$volume[$key]  = $row['volume'];
+    	$edition[$key] = $row['edition'];
 	}
-        echo "<tr>";
-                $date = $result['date'];
-                echo $td . date('Y M d H:i:s',$date) . "</td>";
-                $uwsservice = $result['uwsservice'];
-                echo $td . utf8_decode($uwsservice) . "</td>";
-                $description = $result['description'];
-                echo $td . utf8_decode($description) . "</td>";
-                $lifetime = $result['lifetime'];
-                echo $td . $lifetime . "</td>";
-                $factor = $result['factor'];
-                echo $td . $factor . "</td>";
-                $link = $result['link'];
-                echo $td . utf8_decode($link) . "</td>";
-        echo "</tr>";
-	$cnt++;
+	*/
+
+	// Sort the data with volume descending, edition ascending
+	// Add $data as the last parameter, to sort by the common key
+	//$sorted_transactions = array_multisort($volume, SORT_DESC, $edition, SORT_ASC, $data);
+
+   	
+   	
+   	
+   	//foreach ($all_transactions as $entry) {
+   	$balance = 0;
+   	while ($result = mysql_fetch_array($query))
+   	{
+		if ($cnt%2 == 0) {
+			$td = $tdnorm;
+		} else {
+			$td = $tdalt;
+		}
+	    echo "<tr>";
+        $date = $result['date'];
+        echo $td . date('Y M d H:i:s',$date) . "</td>";
+        $uwsservice = $result['uwsservice'];
+        echo $td . utf8_decode($uwsservice) . "</td>";
+        $uwsunit = $result['uwsunit'];
+        echo $td . utf8_decode($uwsunit) . "</td>";
+        $description = $result['description'];
+        echo $td . utf8_decode($description) . "</td>";
+        $lifetime = $result['lifetime'];
+        echo $td . $lifetime . "</td>";
+        $amount = $result['amount'];
+        echo $td . $amount . "</td>";
+        $factor = $result['factor'];
+        echo $td . $factor . "</td>";
+        $price = $result['price'];
+        echo $td . $price . "</td>";
+        $balance = $balance + ($lifetime * $factor);
+        echo $td . $balance . "</td>";
+        $link = $result['link'];
+        echo $td . utf8_decode($link) . "</td>";
+	    echo "</tr>";
+		
+		$cnt++;
    }
 ?>
   </table>

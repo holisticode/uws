@@ -57,9 +57,9 @@
 				$total_services 	= $result['total_services'];
 				$total_inventory 	= $result['total_inventory'];
 			}
-			echo "weighted: " . $weighted_val;
+			//echo "weighted: " . $weighted_val;
 			$service_units = $weighted_val * $total_services / $total_inventory;
-			echo "service units earned = $service_units";
+			//echo "service units earned = $service_units";
 			$sql = "UPDATE uwscontributors SET balance=balance+$service_units where contributor='$user'";
 			$result = mysql_query($sql);
 		

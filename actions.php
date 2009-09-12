@@ -1,5 +1,5 @@
 
-			<h3><?php echo translate("uws:actions", $lang) ?></h3>
+			<h3><?php echo translate("uws:actions") ?></h3>
 			<div class="content">
 				<ul class="linklist">
 					<li class="first"><a href="uploadStory.php"><?php echo translate("uws:chat_upload") ?></a></li>
