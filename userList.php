@@ -76,7 +76,7 @@ var requiredRevision = 45;
    	$total_balance = 0;
    	$total_perc    = 0;
 
-   	$sql = ("SELECT contributor,balance from uwscontributors");
+   	$sql = ("SELECT contributor,balance from contributors");
    	$query = mysql_query($sql);
 
    	while ($result = mysql_fetch_array($query)) 

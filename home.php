@@ -51,21 +51,21 @@
 <?php		
 	
 	//$username = $_SESSION['uname'];
-	$sql = ("SELECT balance from uwscontributors where contributor = '$username'");
+	$sql = ("SELECT balance from contributors where contributor = '$username'");
    	$query = mysql_query($sql);
    	$userbalance = 0;
    	while ($result = mysql_fetch_array($query)) {
        		$userbalance = $result[0];
    	}
    	$totalServices = 0;
-   	$sql = ("SELECT * from uwscontributors");
+   	$sql = ("SELECT * from contributors");
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query)) {
        		$totalServices = $totalServices + $result['balance'];
    	}
 
    	$totalInventory = 0;
-   	$sql = ("SELECT * from uwsunits");
+   	$sql = ("SELECT * from units");
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query)) {
        		$totalInventory = $totalInventory + $result['inventory'];
@@ -141,7 +141,7 @@
 	$inventorize_entries = array();
 	$consume_entries = array();
 	
-	$sql = ("SELECT * from uwsservice where contributor = '$username'");
+	$sql = ("SELECT * from service where contributor = '$username'");
    	$query = mysql_query($sql);
    	
    	while ($result = mysql_fetch_array($query)) {
@@ -149,7 +149,7 @@
    		//print_r($result);
    	}
    	//print_r($service_entries);
-   	$sql = ("SELECT * from uwsinventorize where contributor = '$username'");
+   	$sql = ("SELECT * from inventorize where contributor = '$username'");
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query)) {
    		//array_push($inventorize_entries, current($result));
@@ -157,7 +157,7 @@
    	}
    	print "<hr>";
    	//print_r($inventorize_entries);
-   	$sql = ("SELECT * from uwsconsume where contributor = '$username'");
+   	$sql = ("SELECT * from consume where contributor = '$username'");
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query)) {
    		//array_push($consume_entries, current($result));
@@ -170,11 +170,11 @@
    	 */
    	 
    	$sql = "select journalID,date,contributor,uwsservice,description,lifetime,factor,link," .
-   				"null as uwsunit,null as amount,null as price from uwsservice where contributor='$username' union ".
+   				"null as uwsunit,null as amount,null as price from service where contributor='$username' union ".
    		   "select journalID,date,contributor,null,description,null,factor,link,uwsunit,amount,null ".
-   		        "as invent from uwsinventorize where contributor='$username'  union ".
+   		        "as invent from inventorize where contributor='$username'  union ".
    		   "select journalID,date,contributor,null,description,null,factor,link,uwsunit,amount,price ".
-   		   		"as consume from uwsconsume where contributor='$username' order by date";
+   		   		"as consume from consume where contributor='$username' order by date";
    	$query = mysql_query($sql);
    	
    	 
@@ -209,6 +209,11 @@
 		} else {
 			$td = $tdalt;
 		}
+		$ta_id = $result['journalID'];
+		$sql = "SELECT balance FROM balance_history WHERE contributor='$username' AND ".
+					"transaction_id = '$ta_id'";
+		$query = mysql_query($sql);
+		$balance = mysql_fetch_row($query);
 	    echo "<tr>";
         $date = $result['date'];
         echo $td . date('Y M d H:i:s',$date) . "</td>";
@@ -226,7 +231,7 @@
         echo $td . $factor . "</td>";
         $price = $result['price'];
         echo $td . $price . "</td>";
-        $balance = $balance + ($lifetime * $factor);
+        //$balance = $balance + ($lifetime * $factor);
         echo $td . $balance . "</td>";
         $link = $result['link'];
         echo $td . utf8_decode($link) . "</td>";

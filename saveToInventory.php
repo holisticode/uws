@@ -13,7 +13,7 @@
 	include "config.php";
 	
 	//first check that the unit exists; if not: add.
-	$sql 	= ("SELECT unit FROM uwsunits WHERE unit = '$unit'");
+	$sql 	= ("SELECT unit FROM units WHERE unit = '$unit'");
 	$query 	= mysql_query($sql);
 	$exists = '';
 	
@@ -22,7 +22,7 @@
 	}
 	$date = time();
 	if ($exists == '') {
-		$query = "INSERT into uwsunits values ('','$date','$unit','0','0','$factor','')";
+		$query = "INSERT into units values ('','$date','$unit','0','0','$factor','')";
 		$result = mysql_query($query);
 		if (!$result) {
 			$header("Location:error.php?error=Query failed: " . mysql_error());
@@ -34,7 +34,7 @@
 	
 	$date = time();
 
-	$query = "INSERT into uwsinventorize values ('','$date','$username','$unit','$desc','$value','$factor','')";
+	$query = "INSERT into inventorize values ('','$date','$username','$unit','$desc','$value','$factor','')";
 	$result = mysql_query($query);
 	if (!$result) {
 		print("Query failed: " . mysql_error());
@@ -60,7 +60,7 @@
 			//echo "weighted: " . $weighted_val;
 			$service_units = $weighted_val * $total_services / $total_inventory;
 			//echo "service units earned = $service_units";
-			$sql = "UPDATE uwscontributors SET balance=balance+$service_units where contributor='$user'";
+			$sql = "UPDATE contributors SET balance=balance+$service_units where contributor='$user'";
 			$result = mysql_query($sql);
 		
 			if (!$result) {

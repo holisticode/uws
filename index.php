@@ -8,7 +8,7 @@ if(isset($_COOKIE['uws_login']))
 	{
 	$username = $_COOKIE['uws_login'];
 	$pass = $_COOKIE['Key_my_site'];
-	$check = mysql_query("SELECT * FROM uwscontributors WHERE contributor = '$username'")or die(mysql_error());
+	$check = mysql_query("SELECT * FROM contributors WHERE contributor = '$username'")or die(mysql_error());
 	while($info = mysql_fetch_array( $check ))
 	{
 		if ($pass != $info['password'])
@@ -39,7 +39,7 @@ if (isset($_POST['submit'])) { // if form has been submitted
 	if (!get_magic_quotes_gpc()) {
 		$_POST['email'] = addslashes($_POST['email']);
 	}
-	$check = mysql_query("SELECT * FROM uwscontributors WHERE contributor = '".$_POST['uname']."'")or die(mysql_error());
+	$check = mysql_query("SELECT * FROM contributors WHERE contributor = '".$_POST['uname']."'")or die(mysql_error());
 
 	//Gives error if user doesn't exist
 	$check2 = mysql_num_rows($check);

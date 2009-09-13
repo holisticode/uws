@@ -48,7 +48,7 @@
 	include "config.php";
 	session_start();
 
-   	$sql = ("SELECT unit,inventory from uwsunits");
+   	$sql = ("SELECT unit,inventory from units");
    	$query = mysql_query($sql);
    	$cnt=0;
    	$tdnorm = '<td class="spec">';

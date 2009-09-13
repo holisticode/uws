@@ -51,21 +51,21 @@
 <?php		
 	
 	$username = $_GET['user'];
-	$sql = ("SELECT balance from uwscontributors where contributor = '$username'");
+	$sql = ("SELECT balance from contributors where contributor = '$username'");
    	$query = mysql_query($sql);
    	$userbalance = 0;
    	while ($result = mysql_fetch_array($query)) {
        		$userbalance = $result[0];
    	}
    	$totalServices = 0;
-   	$sql = ("SELECT * from uwscontributors");
+   	$sql = ("SELECT * from contributors");
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query)) {
        		$totalServices = $totalServices + $result['balance'];
    	}
 
    	$totalInventory = 0;
-   	$sql = ("SELECT * from uwsunits");
+   	$sql = ("SELECT * from units");
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query)) {
        		$totalInventory = $totalInventory + $result['inventory'];
@@ -132,7 +132,7 @@
 
 
 <?php
-   $sql = ("SELECT * from uwsservice where contributor = '$username'");
+   $sql = ("SELECT * from service where contributor = '$username'");
    $query = mysql_query($sql);
    $cnt=0;
    $tdnorm = '<td class="spec">';
@@ -147,8 +147,8 @@
         echo "<tr>";
                 $date = $result['date'];
                 echo $td . date('Y M d H:i:s',$date) . "</td>";
-                $uwsservice = $result['uwsservice'];
-                echo $td . utf8_decode($uwsservice) . "</td>";
+                $service = $result['service'];
+                echo $td . utf8_decode($service) . "</td>";
                 $description = $result['description'];
                 echo $td . utf8_decode($description) . "</td>";
                 $lifetime = $result['lifetime'];

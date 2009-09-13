@@ -58,7 +58,7 @@
 			//print "User: ".$user."<br>";	
 			//hole user ids
 			$user_id = "";
-			$sql = "SELECT * FROM uwscontributors WHERE contributor = '$user'";
+			$sql = "SELECT * FROM contributors WHERE contributor = '$user'";
 			//print "SQL: ".$sql."<br>";
 			$query = mysql_query($sql);
 			while ($result = mysql_fetch_array($query)) {
@@ -68,7 +68,7 @@
 			{
 				//neuer user
 				$timestamp = time();			
-				$query = "INSERT into uwscontributors values ('', '$timestamp', '$user','0','','')";
+				$query = "INSERT into contributors values ('', '$timestamp', '$user','0','','')";
 				$result = mysql_query($query);
 				if (!$result) {
 					print("Query failed: " . mysql_error());
@@ -80,7 +80,7 @@
 			$work 	= $data[$time_key];
 			$factor = $data[$factor_key];
 			$desc	= implode(" - ",array_keys($users));
-			$query 	= "INSERT into uwsservice values ('','$date','$user','$contribution','$desc','$work','$factor','$storyLink')";
+			$query 	= "INSERT into service values ('','$date','$user','$contribution','$desc','$work','$factor','$storyLink')";
 			
 			$result = mysql_query($query);
 			if (!$result) 

@@ -54,7 +54,7 @@
    	</tr>
 
 <?php
-   	$sql = ("SELECT * from uwsconsume");
+   	$sql = ("SELECT * from consume");
    	$query = mysql_query($sql);
    	$cnt=0;
    	$tdnorm = '<td class="spec">';

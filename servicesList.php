@@ -41,7 +41,7 @@
    	</tr>
 
 <?php
-   	$sql = ("SELECT * from uwsservices");
+   	$sql = ("SELECT * from services");
    	$query = mysql_query($sql);
    	$cnt=0;
    	$tdnorm = '<td class="spec">';

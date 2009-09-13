@@ -17,7 +17,7 @@
 	$factor	= $_POST['my_factor'];
 	$unit	= $_POST['unit'];
 	
-	$sql = "INSERT INTO uwsconsume VALUES('','$date','$username','$unit','','$bid','$factor','$price','')";
+	$sql = "INSERT INTO consume VALUES('','$date','$username','$unit','','$bid','$factor','$price','')";
 	$result = mysql_query($sql);
 	if (!$result) {
 		$target = "error.php?error=Query failed: " . mysql_error();

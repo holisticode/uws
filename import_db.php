@@ -10,7 +10,7 @@ $redirectto = "admin.php";
 
 include "config.php";
 
-$query 		= "SELECT original_imported FROM uwssettings;";
+$query 		= "SELECT original_imported FROM settings;";
 $result 	= mysql_query($query);
 $imported	= false;
 
@@ -81,7 +81,7 @@ class UWS_InitialImport
 			$this->insert_inventarizations($inventarisations);
 			$this->insert_consumations($consumations);
 		
-			$query 	= "INSERT INTO uwssettings VALUES('1');";
+			$query 	= "INSERT INTO settings VALUES('1');";
 			$this->do_query($query);
 		} // if regexp matches
 	}//import
@@ -89,7 +89,7 @@ class UWS_InitialImport
 	
 	function create_service_statement($entry)
 	{	
-		$uwsservice 	= $this->insert_if_missing_service($entry[5]);
+		$service 	= $this->insert_if_missing_service($entry[5]);
 		$contributor 	= $this->insert_if_missing_contributor($entry[4]);
 		$statement 		= $this->create_statement($entry);
 		return $statement;
@@ -151,13 +151,13 @@ class UWS_InitialImport
 	
 	function insert_if_missing_unit($name, $factor)
 	{
-		$table_name = "uwsunits";
+		$table_name = "units";
 		$field	    = "unit";	
 		
 		if ($this->entry_missing($name,$table_name,$field))
 		{
 			$time = time();
-	   		$query = "INSERT into uwsunits values('','$time','$name','0','0','$factor','')";
+	   		$query = "INSERT into units values('','$time','$name','0','0','$factor','')";
 	   		
 	   		$this->do_query($query);
 	   		$this->update_cache($name);
@@ -188,13 +188,13 @@ class UWS_InitialImport
 	
 	function insert_if_missing_service($name)
 	{
-		$table_name = "uwsservices";
+		$table_name = "services";
 		$field	    = "service";
 		//print "insert_if_missing_service: " . $name ."\n<br>";
 	   	if ($this->entry_missing($name,$table_name,$field))
 	   	{
 	   		$time = time();
-	   		$query = "INSERT into uwsservices values('','$time','$name','0','')"; 		
+	   		$query = "INSERT into services values('','$time','$name','0','')"; 		
 	   		
 	   		$this->do_query($query);
 	   		$this->update_cache($name);
@@ -206,7 +206,7 @@ class UWS_InitialImport
 	
 	function insert_if_missing_contributor($name)
 	{
-		$table_name = "uwscontributors";
+		$table_name = "contributors";
 		$field	    = "contributor";
 		$standard_password_extension = "123";
 		
@@ -215,7 +215,7 @@ class UWS_InitialImport
 	   	{
 	   		$time = time();
 	   		$password = md5($name . $standard_password_extension);	   		
-	   		$query = "INSERT into uwscontributors values('','$time','$name','$password','0','','')"; 		
+	   		$query = "INSERT into contributors values('','$time','$name','$password','0','','')"; 		
 	   		//print $query . "<br>";
 	   		$this->do_query($query);
 	   		$this->update_cache($name);
@@ -251,20 +251,20 @@ class UWS_InitialImport
 	
 	function insert_services($statements)
 	{
-		$sql = "INSERT INTO uwsservice VALUES(";	
+		$sql = "INSERT INTO service VALUES(";	
 		$this->insert_statement($statements, $sql);	
 	}
 	
 	function insert_inventarizations($statements)
 	{
-		$sql = "INSERT INTO uwsinventorize VALUES(";
+		$sql = "INSERT INTO inventorize VALUES(";
 		$this->insert_statement($statements, $sql);
 		
 	}
 	
 	function insert_consumations($statements)
 	{
-		$sql = "INSERT INTO uwsconsume VALUES(";
+		$sql = "INSERT INTO consume VALUES(";
 		$this->insert_statement($statements, $sql);
 		
 	}
@@ -326,7 +326,7 @@ class UWS_InitialImport
 
 <script language="JavaScript">
 <!-- Begin
-	document.location.href = "<?php echo $redirectto ?>";
+	#document.location.href = "<?php echo $redirectto ?>";
 	
 	
  // End -->

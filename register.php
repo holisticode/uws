@@ -53,7 +53,7 @@ if (isset($_POST['submit'])) {
 	}
 	
 	$usercheck = $_POST['username'];
-	$check = mysql_query("SELECT contributor FROM uwscontributors WHERE contributor = '$usercheck'")
+	$check = mysql_query("SELECT contributor FROM contributors WHERE contributor = '$usercheck'")
 	or die(mysql_error());
 	$check2 = mysql_num_rows($check);
 
@@ -75,7 +75,7 @@ if (isset($_POST['submit'])) {
 	}
 
 	// now we insert it into the database
-	$insert = "INSERT INTO uwscontributors (contributor, password)
+	$insert = "INSERT INTO contributors (contributor, password)
 	VALUES ('".$_POST['username']."', '".$_POST['pass']."')";
 	$add_member = mysql_query($insert);
 ?>

@@ -16,7 +16,7 @@
 	
 	//first check that the service exists; if not: add
 	//TODO: Check if user exists?
-	$sql = ("SELECT service FROM uwsservices WHERE service = '$contribution'");
+	$sql = ("SELECT service FROM services WHERE service = '$contribution'");
 	$query = mysql_query($sql);
 	while ($result = mysql_fetch_array($query)) {
 		$service = $result['service'];
@@ -25,7 +25,7 @@
 	
 	if ($service == '') {
 		$date = time();
-		$query = "INSERT into uwsservices values ('','$date','$contribution','0','')";
+		$query = "INSERT into services values ('','$date','$contribution','0','')";
 		$result = mysql_query($query);
 		if (!$result) {
 			print("Query failed: " . mysql_error());
@@ -35,7 +35,7 @@
 	}
 	
 	$date = time();
-	$query = "INSERT into uwsservice values ('','$date','$user','$contribution','$desc','$work','$factor','')";
+	$query = "INSERT into service values ('','$date','$user','$contribution','$desc','$work','$factor','')";
 	//print $query;
 	$result = mysql_query($query);
 	if (!$result) {
@@ -46,7 +46,7 @@
 		
 		if ($receiver != "" || $receiver != null)
 		{
-			$query = "UPDATE uwscontributors SET balance=balance - $weighted_perf where contributor='$receiver'";
+			$query = "UPDATE contributors SET balance=balance - $weighted_perf where contributor='$receiver'";
 			$result = mysql_query($query);
 			if (!$result) {
 				print("Query failed: " . mysql_error());

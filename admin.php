@@ -107,7 +107,7 @@
    	$tdalt  = '<td class="specalt">';
    	$td = $tdnorm;
 
-   	$sql = ("SELECT * from uwsservice");
+   	$sql = ("SELECT * from service");
    	$query = mysql_query($sql);
 
    	while ($result = mysql_fetch_array($query)) 
@@ -124,8 +124,8 @@
         echo $td . $type . "</td>";
         $contributor = $result['contributor'];
         echo $td . utf8_decode($contributor) . "</td>";
-        $uwsservice = $result['uwsservice'];
-        echo $td . utf8_decode($uwsservice) . "</td>";       
+        $service = $result['service'];
+        echo $td . utf8_decode($service) . "</td>";       
         $lifetime = $result['lifetime'];
         echo $td . $lifetime . "</td>";
         $factor = $result['factor'];

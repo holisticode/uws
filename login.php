@@ -8,7 +8,7 @@
 	$pwd      = $_POST['pwd'];
 	
 	//TODO: Needs proper registration process :)
-	$sql = ("SELECT contributorID from uwscontributors where contributor = '$username'");
+	$sql = ("SELECT contributorID from contributors where contributor = '$username'");
    	$query = mysql_query($sql);
    	$result = mysql_fetch_array($query); 
    	//echo $result;
@@ -16,7 +16,7 @@
     {
     	//echo "creating new user";
     	$timestamp = time();
-    	$query = "INSERT into uwscontributors values ('', '$timestamp','$username','0','', '')";
+    	$query = "INSERT into contributors values ('', '$timestamp','$username','0','', '')";
     	
     	$result = mysql_query($query);
 		if (!$result) {

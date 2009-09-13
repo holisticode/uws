@@ -14,7 +14,7 @@ if (isset($_POST['submit'])) { // if form has been submitted
 	if (!get_magic_quotes_gpc()) {
 		$_POST['email'] = addslashes($_POST['email']);
 	}
-	$check = mysql_query("SELECT * FROM uwscontributors WHERE contributors = '".$_POST['uname']."'")or die(mysql_error());
+	$check = mysql_query("SELECT * FROM contributors WHERE contributors = '".$_POST['uname']."'")or die(mysql_error());
 
 	//Gives error if user dosen't exist
 	$check2 = mysql_num_rows($check);

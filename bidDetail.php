@@ -114,7 +114,7 @@
 	$my_share_price	= 0;
 	
 	//if unitID not set, first offer to choose unit
-	$sql = "SELECT * from uwsunits where bidID='" . $bidID . "'";
+	$sql = "SELECT * from units where bidID='" . $bidID . "'";
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query)) 
    	{
@@ -130,7 +130,7 @@
 <?php
 	
    	
-   	$sql = "SELECT balance from uwscontributors where contributor='" . $username . "'";
+   	$sql = "SELECT balance from contributors where contributor='" . $username . "'";
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query)) 
    	{

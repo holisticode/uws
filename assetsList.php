@@ -44,7 +44,7 @@
    	</tr>
 
 <?php	
-   	$sql = "SELECT * from uwsunits";
+   	$sql = "SELECT * from units";
    	$query = mysql_query($sql);
    	$cnt=0;
    	$tdnorm = '<td class="spec">';
