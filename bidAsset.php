@@ -114,37 +114,37 @@
 
 	include "header.php";
 		
-	$username 	= $_SESSION['uname'];
+	$member_id 	= $_SESSION['member_id'];
 
-	$unitID			= $_GET['unitID'];
+	$asset_id		= $_GET['unitID'];
 	$inventory		= 0;
 	$balance		= 0;
 	$myshare		= 0;
 	$my_share_price	= 0;
 	
-	//if unitID not set, first offer to choose unit
-	$sql = "SELECT unit,inventory,physical,factor from units where unitID='" . $unitID . "'";
+	//TODO: if unitID not set, first offer to choose unit
+	$sql = "SELECT unit,inventory,physical,factor from assetlist where asset_id='" . $unitID . "'";
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query)) 
    	{
    		$inventory 	= $result['inventory'];
-   		$unit		= $result['unit'];
+   		$unit		= $result['asset'];
    		$physical	= $result['physical'];
-   		$factor		= $result['factor'];
+   		$factor		= $result['last_factor'];
    	}
    	
-   	$sql = "SELECT balance from contributors where contributor='" . $username . "'";
+   	$sql = "SELECT balance from members where member_id='" . $member_id . "'";
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query)) 
    	{
    		$balance = $result['balance'];
    	}
    	   	
-   	$sql   				= "SELECT total_services from uwstotals";
+   	$sql   				= "SELECT total_services from totals";
    	$query 				= mysql_query($sql);
    	$total_services		= mysql_fetch_row($query);
    	
-   	$sql   				= "SELECT total_inventory from uwstotals";
+   	$sql   				= "SELECT total_inventory from totals";
    	$query 				= mysql_query($sql);
    	$total_inventory	= mysql_fetch_row($query);
    	
@@ -323,7 +323,7 @@
           </div></td>
         </tr>
       </table>
-
+	  <input type="hidden" name="asset_id" id="asset_id" value="<?php echo $asset_id ?>" />
       <input type="hidden" name="unit" id="unit" value="<?php echo $unit ?>" />
       <input type="hidden" name="old_factor" id="unit" value="<?php echo $factor ?>" />
       <input type="hidden" name="same_factor_price_per_unit" id="same_factor_price_per_unit" value="<?php echo $same_factor_price_per_unit ?>" />

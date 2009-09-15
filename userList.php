@@ -76,12 +76,12 @@ var requiredRevision = 45;
    	$total_balance = 0;
    	$total_perc    = 0;
 
-   	$sql = ("SELECT contributor,balance from contributors");
+   	$sql = ("SELECT name,balance from members");
    	$query = mysql_query($sql);
 
    	while ($result = mysql_fetch_array($query)) 
    	{   		   		
-   		$user = $result['contributor'];   	   		
+   		$user = $result['name'];   	   		
         $balance = $result['balance'];
         $users[$user] = $balance;
         
@@ -94,35 +94,38 @@ var requiredRevision = 45;
     //reset($users);
    	foreach ($users as $user => $balance)
    	{
-		if ($i%2 != 0) 
-		{
-			$td = $tdnorm;
-		} else 
-		{
-			$td = $tdalt;
-		}
-        echo "<tr>";
-        //$user = key($users);
-        //$balance = $users[$user];
-        $perc = 0;         
-		echo $td . "<a href=\"user.php?user=$user\">$user"  . "</td>";
-		echo $td . $balance . "</td>";
-		if ($total_balance != 0)
-		{
-			$perc = ($balance/$total_balance) * 100;
-			$perc = round($perc,3);
-			$perc_chart[$user] = $perc;
-		}
-		
-		$total_perc += $perc;
-		if ($perc == 0){
-			$perc = "< 0.001";
-		}
-		echo $td . $perc . "</td>";
-		
-        echo "</tr>";
-        $i++;
-        //next($users);	
+   		if ($balance != 0)
+   		{
+			if ($i%2 != 0) 
+			{
+				$td = $tdnorm;
+			} else 
+			{
+				$td = $tdalt;
+			}
+	        echo "<tr>";
+	        //$user = key($users);
+	        //$balance = $users[$user];
+	        $perc = 0;         
+			echo $td . "<a href=\"user.php?user=$user\">$user"  . "</td>";
+			echo $td . $balance . "</td>";
+			if ($total_balance != 0)
+			{
+				$perc = ($balance/$total_balance) * 100;
+				$perc = round($perc,3);
+				$perc_chart[$user] = $perc;
+			}
+			
+			$total_perc += $perc;
+			if ($perc == 0){
+				$perc = "< 0.001";
+			}
+			echo $td . $perc . "</td>";
+			
+	        echo "</tr>";
+	        $i++;
+   		}
+        	
    }
    
    create_chart_xml($perc_chart);

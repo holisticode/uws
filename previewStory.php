@@ -54,7 +54,13 @@ body {
 </head>
 
 <?php
-	$storyLink 	= $_GET['storyLink'];
+	$HTTP_METHOD_VAR = $_GET;
+	if (! isset($_GET['storyLink']))
+	{
+		$HTTP_METHOD_VAR = $_POST;
+	}
+	$storyLink 	= $HTTP_METHOD_VAR['storyLink'];
+	$desc		= $HTTP_METHOD_VAR['desc'];
 	
 	$users 			= array();
 	$user_values 	= array();
@@ -66,7 +72,7 @@ body {
 	
 	$default_factor	= 1.0;
 	
-	foreach($_GET as $key=>$value)
+	foreach($HTTP_METHOD_VAR as $key=>$value)
 	{
 		//print "KEY: ".$key." - VALUE: ".$value;
 		if (strncmp($user_key,$key, 5) === 0)
@@ -114,7 +120,7 @@ body {
 
 
 
-	<form name="story" id="story" action="previewStory.php" method="get" enctype="multipart/form-data">
+	<form name="story" id="story" action="previewStory.php" method="post" enctype="multipart/form-data">
        <table class="formtable" width="470" cellspacing="0" cellpadding="0">
         <tr>
           <td width="50" class="text"><?php echo translate("uws:service") ?>:</td>
@@ -130,6 +136,17 @@ body {
           <td width="50" class="text"><?php echo translate("uws:link")?></td>
           <td width="25">&nbsp;</td>
           <td><span class="text"><input name="storyLink" type="text" id="storyLink" value="<?php echo $storyLink ?>" size="40" />
+          </span></td>       
+        </tr>
+        <tr>
+          <td width="50">&nbsp;</td>
+          <td width="25">&nbsp;</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td width="50" class="text"><?php echo translate("uws:desc")?></td>
+          <td width="25">&nbsp;</td>
+          <td><span class="text"><input name="desc" type="text" id="desc" value="<?php echo $desc ?>" size="40" />
           </span></td>       
         </tr>
       </table>
@@ -178,6 +195,7 @@ body {
 		$count++;
 		}
 ?>
+<br>
 		<tr bgcolor=" #666666">
           <td width="50" height="1"></td>
           <td height="5"></td>

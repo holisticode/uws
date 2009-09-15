@@ -44,7 +44,7 @@
    	</tr>
 
 <?php	
-   	$sql = "SELECT * from units";
+   	$sql = "SELECT * from assetlist";
    	$query = mysql_query($sql);
    	$cnt=0;
    	$tdnorm = '<td class="spec">';
@@ -59,9 +59,9 @@
 			$td = $tdalt;
 		}
     	echo "<tr>";
-            $unit		= $result['unit'];
+            $unit		= $result['asset'];
             $value		= $result['inventory'];
-            $factor		= $result['factor'];
+            $factor		= $result['last_factor'];
             $physical	= $result['physical'];
 			echo $td . $unit . "</td>";
 			echo $td . $value . "</td>";
@@ -69,8 +69,8 @@
     		echo $td . $factor . "</td>";
     		
     		echo $td;
-    		$unitID = $result['unitID'];
-    		echo '<a href="bidAsset.php?unitID=' . $unitID . 
+    		$asset_id = $result['asset_id'];
+    		echo '<a href="bidAsset.php?unitID=' . $asset_id . 
 				'"><img src="/images/bid.png" border="0" alt="' .
 				translate("uws-bid") . '"></a>';
 			echo "</td>";
@@ -78,7 +78,7 @@
 	$cnt++;
    }
    
-   $sql   	= "SELECT total_inventory from uwstotals";
+   $sql   	= "SELECT total_inventory from totals";
    $query 	= mysql_query($sql);
    $invsum	= mysql_fetch_row($query);
    

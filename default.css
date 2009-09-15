@@ -262,6 +262,20 @@ padding: 0px 0px 10px 15px;
 margin-bottom: 20px;
 }
 
+#primarycontent h7
+{
+position: relative;
+top: 4px;
+font-size: 16px;
+line-height: 25px;
+color: #FF0000;
+letter-spacing: -1px;
+background: url('images/a22.gif') bottom repeat-x;
+padding: 0px 0px 10px 10px;
+margin-bottom: 20px;
+}
+
+
 #primarycontent .content
 {
 padding: 0px 15px 0px 15px;

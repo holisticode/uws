@@ -46,7 +46,7 @@
    	</tr>
 
 <?php	
-   	$sql = "SELECT * from uwsbid";
+   	$sql = "SELECT * from bid";
    	$query = mysql_query($sql);
    	$cnt=0;
    	$tdnorm = '<td class="specsmall">';
@@ -61,16 +61,16 @@
 			$td = $tdalt;
 		}
     	echo "<tr>";
-    		$date		= $result['date'];
-    		$user		= $result['user'];
-            $unit		= $result['uwsunit'];
+    		$date		= $result['tstamp'];
+    		$user		= $result['member_id'];
+            $asset_id	= $result['asset_id'];
             $amount		= $result['amount'];
             $price		= $result['price'];
             $factor		= $result['factor'];
             
 			echo $td . date('Y M d H:i:s',$date) . "</td>";
-			echo $td . $user . "</td>";
-    		echo $td . $unit . "</td>";
+			echo $td . get_member_name_from_id($user) . "</td>";
+    		echo $td . get_asset_name_from_id($unit) . "</td>";
     		echo $td . round($amount,3) . "</td>";
     		echo $td . round($price,3) . "</td>";
     		echo $td . round($factor,3) . "</td>";

@@ -58,17 +58,19 @@
 			//print "User: ".$user."<br>";	
 			//hole user ids
 			$user_id = "";
-			$sql = "SELECT * FROM contributors WHERE contributor = '$user'";
+			$sql = "SELECT member_id FROM members WHERE name = '$user'";
 			//print "SQL: ".$sql."<br>";
 			$query = mysql_query($sql);
-			while ($result = mysql_fetch_array($query)) {
-				$user_id = $result['contributorID'];
-			}
+			$result = mysql_fetch_row($query);
+			$user_id = $result[0];
+			
 			if ($user_id == "") 
 			{
 				//neuer user
-				$timestamp = time();			
-				$query = "INSERT into contributors values ('', '$timestamp', '$user','0','','')";
+				$timestamp = time();
+				$password  = md5($user."123");			
+				$query = "INSERT into members values (join_date,name, password,cell_id)." .
+						 "('', '$timestamp',$user,$password,$DEFAULT_CELL_ID)";
 				$result = mysql_query($query);
 				if (!$result) {
 					print("Query failed: " . mysql_error());
@@ -80,17 +82,37 @@
 			$work 	= $data[$time_key];
 			$factor = $data[$factor_key];
 			$desc	= implode(" - ",array_keys($users));
-			$query 	= "INSERT into service values ('','$date','$user','$contribution','$desc','$work','$factor','$storyLink')";
 			
-			$result = mysql_query($query);
-			if (!$result) 
-			{
-				print("Query failed: " . mysql_error());
-			} else 
-			{
-				$user_journal_id = mysql_insert_id();
-			}
-		} 
+			$sql 	= "SELECT balance FROM members WHERE member_id='$user_id'";
+			$query  = mysql_query($sql);
+			$result = mysql_fetch_row($query);
+			$balance = $result[0];
+			
+			$service_units = $work * $factor;
+			$balance = $balance + $service_units;
+			 
+			$service_id = get_service_id_from_name($contribution);
+			
+			$sql 	= "INSERT INTO transactions VALUES ".
+				   		"('','$timestamp','$SERVICE_TYPE','0','$user_id','$desc','$factor','$link', $balance)";
+		    //print $sql."<br><br>";
+			$ta_id 	= do_query($sql);		
+			$sql 	= "INSERT INTO service VALUES('','$ta_id','','','$service_id','$lifetime')";
+			$srv_id = do_query($sql);
+			
+			$sql	= "UPDATE transactions SET transaction_id='$srv_id' where journal_id='$ta_id'";
+			do_query($sql);
+			
+			$sql	= "UPDATE totals SET total_services=total_services + $service_units ";
+			do_query($sql);
+			
+			$sql	= "UPDATE servicelist SET provided=provided + $service_units where service_id='$service_id'";
+			$this->do_query($sql);
+			
+			$sql	= "UPDATE members SET balance=balance + $service_units where member_id='$user_id'";
+			do_query($sql);
+			
+		} //foreach user
 	} catch (Exception $e)
 	{
 		$redirectto = "error.php?error=$e";

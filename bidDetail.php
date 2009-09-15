@@ -107,20 +107,20 @@
 		
 	$username 	= $_SESSION['uname'];
 
-	$unitID			= $_GET['bidID'];
+	$bidID			= $_GET['bidID'];
 	$inventory		= 0;
 	$balance		= 0;
 	$myshare		= 0;
 	$my_share_price	= 0;
 	
 	//if unitID not set, first offer to choose unit
-	$sql = "SELECT * from units where bidID='" . $bidID . "'";
+	$sql = "SELECT * from bid where bid_id='" . $bidID . "'";
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query)) 
    	{
-   		$inventory 	= $result['date'];
-   		$user		= $result['user'];
-   		$unit		= $result['uwsunit'];
+   		$inventory 	= $result['tstamp'];
+   		$user		= $result['member_id'];
+   		$unit		= $result['asset_id'];
         $amount		= $result['amount'];
         $price		= $result['price'];
         $factor		= $result['factor'];
@@ -130,34 +130,34 @@
 <?php
 	
    	
-   	$sql = "SELECT balance from contributors where contributor='" . $username . "'";
-   	$query = mysql_query($sql);
-   	while ($result = mysql_fetch_array($query)) 
-   	{
-   		$balance = $result['balance'];
-   	}
-   	   	
-   	$sql   				= "SELECT total_services from uwstotals";
-   	$query 				= mysql_query($sql);
-   	$total_services		= mysql_fetch_row($query);
-   	
-   	$sql   				= "SELECT total_inventory from uwstotals";
-   	$query 				= mysql_query($sql);
-   	$total_inventory	= mysql_fetch_row($query);
-   	
-   	$total_cost 		= $inventory * $total_services[0] / $total_inventory[0];
-   	$ratio				= $total_cost / $balance;
-   	$my_share_physical	= $physical / $ratio;
-   	$my_share_inventory = $inventory / $ratio;
-   	
-   	if ($my_share_physical > $physical)
-   	{
-   		$my_share_physical = $physical;
-   		$my_share_inventory = $inventory;
-   	}
-   	
-   	$price = ($total_cost / $inventory) * $my_share_inventory;
-   	$same_factor_price_per_unit = $physical / $total_cost;
+//   	$sql = "SELECT balance from members where contributor='" . $username . "'";
+//   	$query = mysql_query($sql);
+//   	while ($result = mysql_fetch_array($query)) 
+//   	{
+//   		$balance = $result['balance'];
+//   	}
+//   	   	
+//   	$sql   				= "SELECT total_services from uwstotals";
+//   	$query 				= mysql_query($sql);
+//   	$total_services		= mysql_fetch_row($query);
+//   	
+//   	$sql   				= "SELECT total_inventory from uwstotals";
+//   	$query 				= mysql_query($sql);
+//   	$total_inventory	= mysql_fetch_row($query);
+//   	
+//   	$total_cost 		= $inventory * $total_services[0] / $total_inventory[0];
+//   	$ratio				= $total_cost / $balance;
+//   	$my_share_physical	= $physical / $ratio;
+//   	$my_share_inventory = $inventory / $ratio;
+//   	
+//   	if ($my_share_physical > $physical)
+//   	{
+//   		$my_share_physical = $physical;
+//   		$my_share_inventory = $inventory;
+//   	}
+//   	
+//   	$price = ($total_cost / $inventory) * $my_share_inventory;
+//   	$same_factor_price_per_unit = $physical / $total_cost;
 ?>
 					<h3><?php echo translate("uws:bid_asset") . ": " . $unit ?></h3>
 					<div class="date">
@@ -320,7 +320,7 @@
           </div></td>
         </tr>
       </table>
-
+	  <input type="hidden" name="asset_id" id="asset_id" value="<?php echo $asset_id ?>" />
       <input type="hidden" name="unit" id="unit" value="<?php echo $unit ?>" />
       <input type="hidden" name="old_factor" id="unit" value="<?php echo $factor ?>" />
       <input type="hidden" name="same_factor_price_per_unit" id="same_factor_price_per_unit" value="<?php echo $same_factor_price_per_unit ?>" />

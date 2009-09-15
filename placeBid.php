@@ -10,6 +10,7 @@
 	$target = "bidList.php";
 	
 	$username 	= $_SESSION['uname'];
+	$member_id	= $_SESSION['member_id'];
 	
 	$date 	= time();
 	$price 	= $_POST['price'];
@@ -17,10 +18,10 @@
 	$factor	= $_POST['my_factor'];
 	$unit	= $_POST['unit'];
 	
-	$sql = "INSERT INTO uwsbid VALUES('','$date','$username','$unit','$bid','$price','$factor')";
+	$sql = "INSERT INTO bid VALUES('','$date','$member_id','$asset_id','$bid','$price','$factor')";
 	$result = mysql_query($sql);
 	if (!$result) {
-		$target = "error.php?Query failed: " . mysql_error();
+		$target = $errorpage . mysql_error();
 	} else {
 		$bid_id = mysql_insert_id();
 	}

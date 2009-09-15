@@ -8,7 +8,7 @@ if(isset($_COOKIE['uws_login']))
 	{
 	$username = $_COOKIE['uws_login'];
 	$pass = $_COOKIE['Key_my_site'];
-	$check = mysql_query("SELECT * FROM contributors WHERE contributor = '$username'")or die(mysql_error());
+	$check = mysql_query("SELECT * FROM members WHERE name = '$username'") or die(mysql_error());
 	while($info = mysql_fetch_array( $check ))
 	{
 		if ($pass != $info['password'])
@@ -39,7 +39,7 @@ if (isset($_POST['submit'])) { // if form has been submitted
 	if (!get_magic_quotes_gpc()) {
 		$_POST['email'] = addslashes($_POST['email']);
 	}
-	$check = mysql_query("SELECT * FROM contributors WHERE contributor = '".$_POST['uname']."'")or die(mysql_error());
+	$check = mysql_query("SELECT * FROM members WHERE name = '".$_POST['uname']."'") or die(mysql_error());
 
 	//Gives error if user doesn't exist
 	$check2 = mysql_num_rows($check);
@@ -52,6 +52,7 @@ if (isset($_POST['submit'])) { // if form has been submitted
 		$_POST['pwd'] 		= stripslashes($_POST['pwd']);
 		$info['password'] 	= stripslashes($info['password']);
 		$_POST['pwd'] 		= md5($_POST['pwd']);
+		$member_id			= $info['member_id'];
 
 		//gives error if the password is wrong
 		if ($_POST['pwd'] != $info['password']) {
@@ -68,6 +69,10 @@ if (isset($_POST['submit'])) { // if form has been submitted
 			$pass = $_POST['pass'];
 			session_start();
 			$_SESSION['uname'] = $user;
+			$sql = "SELECT member_id FROM members WHERE name='$user'";
+			$query = mysql_query($sql);
+			$result = mysql_fetch_row($query);
+			$_SESSION['member_id'] = $result[0];
 			setcookie("uws_login", $user, $hour);
 			setcookie("Key_my_site", $pass , $hour);
 			

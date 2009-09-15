@@ -35,7 +35,7 @@
 				<div class="content">
 	<?php 
 		$msg = $_GET['error'];
-		echo translate("uws:error") . $msg . "<br><br>" ?>
+		echo translate("uws:error") ."<br> ". $msg . "<br><br>" ?>
 <!--
 	<table class="nicetable" cellspacing="0">
 	<tr>

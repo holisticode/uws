@@ -55,7 +55,7 @@
 		$service 	= $_POST['service'];	
 		$desc 		= $_POST['desc'];
 		
-		$sql = "SELECT service FROM services";
+		$sql = "SELECT service FROM servicelist";
 		$query = mysql_query($sql);
 		//$services_list = array();
 		while ($result = mysql_fetch_array($query)) {
@@ -76,7 +76,7 @@
 			if (isset($_POST['save_srv']))
 			{
 				$time = time();
-				$sql = "INSERT INTO services VALUES ('','$time','$service','0','$desc')";
+				$sql = "INSERT INTO servicelist VALUES ('','$time','$service','0','$desc')";
 				$query = mysql_query($sql);
 				if ($query) {
 					echo translate("uws:srv_insert_ok");

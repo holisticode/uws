@@ -50,26 +50,27 @@
 				<div class="content">
 <?php		
 	
-	//$username = $_SESSION['uname'];
-	$sql = ("SELECT balance from contributors where contributor = '$username'");
+	$member_id = $_SESSION['member_id'];
+	$sql = ("SELECT balance from members where member_id = '$member_id'");
    	$query = mysql_query($sql);
    	$userbalance = 0;
-   	while ($result = mysql_fetch_array($query)) {
-       		$userbalance = $result[0];
+   	while ($result = mysql_fetch_array($query)) 
+   	{
+       		$userbalance = $result['balance'];
    	}
    	$totalServices = 0;
-   	$sql = ("SELECT * from contributors");
+   	$sql = ("SELECT total_services from totals");
    	$query = mysql_query($sql);
-   	while ($result = mysql_fetch_array($query)) {
-       		$totalServices = $totalServices + $result['balance'];
-   	}
+   	$result = mysql_fetch_row($query);
+    $totalServices = $result[0];
+   	
 
    	$totalInventory = 0;
-   	$sql = ("SELECT * from units");
+   	$sql = ("SELECT total_inventory from totals");
    	$query = mysql_query($sql);
-   	while ($result = mysql_fetch_array($query)) {
-       		$totalInventory = $totalInventory + $result['inventory'];
-   	}
+   	$result = mysql_fetch_row($query);
+    $totalInventory = $result[0];
+   	
 
 ?>
 	<table class="nicetable" cellspacing="0">
@@ -117,91 +118,43 @@
 		</div>
 				<div id="servicelist">
 				<div class="header">
-					<h3><?php echo translate("uws:my_srv_del") ?></h3>
+					<h3><?php echo translate("uws:my_account") ?></h3>
 				</div>
 				<div class="content">
  <table class="nicetablelarge" cellspacing="0">
    <tr>
-        <th scope="col" abbr="Date"><?php echo translate("uws:date") ?></th>
-        <th scope="col" abbr="Service"><?php echo translate("uws:service") ?></th>
-        <th scope="col" abbr="Unit"><?php echo translate("uws:asset") ?></th>
+        <th scope="col" abbr="Date"><?php echo translate("uws:date") ?></th>        
+        <th scope="col" abbr="Type"><?php echo translate("uws:type") ?></th>
+        <th scope="col" abbr="Action"><?php echo translate("uws:transaction") ?></th>
         <th scope="col" abbr="Description"><?php echo translate("uws:desc") ?></th>
-        <th scope="col" abbr="Time"><?php echo translate("uws:time") ?></th>
-        <th scope="col" abbr="Amount"><?php echo translate("uws:amount") ?></th>
-        <th scope="col" abbr="Factor"><?php echo translate("uws:factor") ?></th>
-        <th scope="col" abbr="Price"><?php echo translate("uws:price") ?></th>
         <th scope="col" abbr="Balance"><?php echo translate("uws:balance") ?></th>
-        <th scope="col" abbr="Link"><?php echo translate("uws:link") ?></th>
+        <th scope="col" abbr="View"><?php echo translate("uws:view") ?></th>
    </tr>
 
 
 <?php
-/*
-	$service_entries = array();
-	$inventorize_entries = array();
-	$consume_entries = array();
 	
-	$sql = ("SELECT * from service where contributor = '$username'");
+	$sql = "SELECT * FROM transactions WHERE member_id = '$member_id'";
+	//TODO: also check the service list for receiver entries for member_id!!!   	
+   	$sql = "SELECT * FROM transaction_type";
    	$query = mysql_query($sql);
+   	$ta_types = array();
    	
-   	while ($result = mysql_fetch_array($query)) {
-   		array_push($service_entries, $result);
-   		//print_r($result);
-   	}
-   	//print_r($service_entries);
-   	$sql = ("SELECT * from inventorize where contributor = '$username'");
-   	$query = mysql_query($sql);
-   	while ($result = mysql_fetch_array($query)) {
-   		//array_push($inventorize_entries, current($result));
-   		array_push($inventorize_entries, $result);
-   	}
-   	print "<hr>";
-   	//print_r($inventorize_entries);
-   	$sql = ("SELECT * from consume where contributor = '$username'");
-   	$query = mysql_query($sql);
-   	while ($result = mysql_fetch_array($query)) {
-   		//array_push($consume_entries, current($result));
-   		array_push($consume_entries, $result);
-   		
-   	}
-   	
-   	print "<hr>";
-   	//print_r($consume_entries);   	  
-   	 */
-   	 
-   	$sql = "select journalID,date,contributor,uwsservice,description,lifetime,factor,link," .
-   				"null as uwsunit,null as amount,null as price from service where contributor='$username' union ".
-   		   "select journalID,date,contributor,null,description,null,factor,link,uwsunit,amount,null ".
-   		        "as invent from inventorize where contributor='$username'  union ".
-   		   "select journalID,date,contributor,null,description,null,factor,link,uwsunit,amount,price ".
-   		   		"as consume from consume where contributor='$username' order by date";
-   	$query = mysql_query($sql);
-   	
-   	 
    	$cnt=0;
    	$tdnorm = '<td class="spec">';
    	$tdalt  = '<td class="specalt">';
-   	$td = $tdnorm;
+   	$td 	= $tdnorm;
+   	$tde 	= "</td>";
    	
-   	//$all_transactions = array_merge($service_entries, $inventorize_entries, $consume_entries);
-   	//print_r($all_transactions);
-  
-	// Obtain a list of columns
-	/*foreach ($all_transactions as $key => $row) {
-    	$volume[$key]  = $row['volume'];
-    	$edition[$key] = $row['edition'];
-	}
-	*/
-
-	// Sort the data with volume descending, edition ascending
-	// Add $data as the last parameter, to sort by the common key
-	//$sorted_transactions = array_multisort($volume, SORT_DESC, $edition, SORT_ASC, $data);
-
+   	while ($result = mysql_fetch_array($query))
+   	{
+   		$key   = $result['type_code'];
+   		$value = $result['type_desc'];
+   		$ta_types[$key] = $value;
+   	}   	
    	
-   	
-   	
-   	//foreach ($all_transactions as $entry) {
-   	$balance = 0;
+   	$sql = "SELECT * FROM transactions WHERE member_id = '$member_id'";
+   	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query))
    	{
 		if ($cnt%2 == 0) {
@@ -209,36 +162,34 @@
 		} else {
 			$td = $tdalt;
 		}
-		$ta_id = $result['journalID'];
-		$sql = "SELECT balance FROM balance_history WHERE contributor='$username' AND ".
-					"transaction_id = '$ta_id'";
-		$query = mysql_query($sql);
-		$balance = mysql_fetch_row($query);
+		$type_code 	= $result['transaction_type'];
+		$ta_type	= $ta_types[$type_code];
+		$transaction_id = $result['transaction_id'];
+		$transaction= get_transaction($type_code,$transaction_id);
+		$ta_id 		= $result['journal_id'];		
 	    echo "<tr>";
-        $date = $result['date'];
-        echo $td . date('Y M d H:i:s',$date) . "</td>";
-        $uwsservice = $result['uwsservice'];
-        echo $td . utf8_decode($uwsservice) . "</td>";
-        $uwsunit = $result['uwsunit'];
-        echo $td . utf8_decode($uwsunit) . "</td>";
-        $description = $result['description'];
-        echo $td . utf8_decode($description) . "</td>";
-        $lifetime = $result['lifetime'];
-        echo $td . $lifetime . "</td>";
-        $amount = $result['amount'];
-        echo $td . $amount . "</td>";
-        $factor = $result['factor'];
-        echo $td . $factor . "</td>";
-        $price = $result['price'];
-        echo $td . $price . "</td>";
-        //$balance = $balance + ($lifetime * $factor);
-        echo $td . $balance . "</td>";
-        $link = $result['link'];
-        echo $td . utf8_decode($link) . "</td>";
+        $date 		= $result['tstamp'];
+        echo $td . date('Y M d H:i:s',$date) . $tde;
+        //echo "ta_type: ".$ta_type;
+        echo $td . translate($ta_type) . $tde;
+        echo $td . $transaction . $tde;
+        $desc = $result['description'];
+        echo $td . $desc . $tde;
+        $balance = $result ['balance'];
+        echo $td . $balance . $tde; 
+        echo $td;
+        echo '<a href="viewTransaction.php?taID=' . $ta_id .
+			 '&taType='.$type_code .'&detID='. $transaction_id .
+			 '&userID='.$member_id. 
+				'"><img src="/images/bid.png" border="0" alt="' .
+				translate("uws:view") . '"></a>'; 
+		echo $tde;      
 	    echo "</tr>";
 		
 		$cnt++;
    }
+   
+
 ?>
   </table>
 				</div><!-- content-->			

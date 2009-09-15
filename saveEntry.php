@@ -9,51 +9,89 @@
 	$user	 		= $_POST['user_1'];
 	$receiver 		= $_POST['user_2'];
 	$factor 		= $_POST['factor_1'];
-	$work	 		= $_POST['work_1'];
-	$weighted_perf 	= $_POST['weighted_perf'];
-	$storyLink 		= $_POST['storyLink'];
+	$lifetime 		= $_POST['work_1'];
+	$service_units 	= $_POST['weighted_perf'];
+	$link 			= $_POST['storyLink'];
 	
+	$member_id		= get_member_id_from_name($user);
+	$receiver_id	= null;
+	if ($receiver != '' || $receiver != null)
+	{
+		$receiver_id 	= get_member_id_from_name($receiver);
+	}
+	
+	//checking for the existence of the service should not be 
+	//necessary anymore, as services can only be added through the
+	//appropriate page
 	
 	//first check that the service exists; if not: add
 	//TODO: Check if user exists?
-	$sql = ("SELECT service FROM services WHERE service = '$contribution'");
-	$query = mysql_query($sql);
-	while ($result = mysql_fetch_array($query)) {
-		$service = $result['service'];
+//	$sql = "SELECT service FROM servicelist WHERE service = '$contribution'";
+//	$query = mysql_query($sql);
+//	$rows = mysql_num_rows($query);
+//	
+//	
+//	if ($rows == 0) {
+//		$date = time();
+//		$query = "INSERT into servicelist values ('','$date','$contribution','0','')";
+//		$result = mysql_query($query);
+//		if (!$result) {
+//			print("Query failed: " . mysql_error());
+//		} else {
+//			$user_1_journal_id = mysql_insert_id();
+//		}
+//	}
+	
+	$timestamp 	= time();
+	$service_id = get_service_id_from_name($contribution);
+	
+	$sql 	= "INSERT INTO transactions VALUES ".
+		   		"('','$timestamp','$SERVICE_TYPE','0','$member_id','$desc','$factor','$link','0')";
+    //print $sql."<br><br>";
+	$ta_id 	= do_query($sql);		
+	$sql 	= "INSERT INTO service VALUES('','$ta_id','','','$service_id','$lifetime')";
+	$srv_id = do_query($sql);
+	
+	$sql	= "UPDATE transactions SET transaction_id='$srv_id' where journal_id='$ta_id'";
+	$this->do_query($sql);
+	
+	$sql	= "UPDATE members SET balance=balance + $service_units where member_id='$member_id'";
+	$this->do_query($sql);
+	
+	if ($receiver == '' || $receiver == null)
+	{
+		$sql	= "UPDATE totals SET total_services=total_services + $service_units";
+		$this->do_query($sql);
+	
+		$sql	= "UPDATE servicelist SET provided=provided + $service_units where service_id='$service'";
+		$this->do_query($sql);
+	}
+	else
+	{
+		$sql	= "UPDATE members SET balance=balance - $service_units where member_id='$receiver_id'";
+		$this->do_query($sql);
 	}
 	
 	
-	if ($service == '') {
-		$date = time();
-		$query = "INSERT into services values ('','$date','$contribution','0','')";
-		$result = mysql_query($query);
-		if (!$result) {
-			print("Query failed: " . mysql_error());
-		} else {
-			$user_1_journal_id = mysql_insert_id();
-		}
-	}
+	$sql 	= "SELECT balance FROM members WHERE member_id='$member_id'";
+	$query  = mysql_query($sql);
+	$result = mysql_fetch_row($query);
+	$new_balance = $result[0];
 	
-	$date = time();
-	$query = "INSERT into service values ('','$date','$user','$contribution','$desc','$work','$factor','')";
-	//print $query;
-	$result = mysql_query($query);
-	if (!$result) {
-		print("Query failed: " . mysql_error());
-	} else {
-		//print "Query OK";
-		$user_1_journal_id = mysql_insert_id();
+	$sql	= "UPDATE transactions SET transaction_id='$srv_id',balance='$new_balance' where journal_id='$ta_id'";
+	$this->do_query($sql);
+	
+	
+	if ($receiver != '' || $receiver != null)
+	{
+		$sql 	= "SELECT balance FROM members WHERE member_id='$receiver_id'";
+		$query  = mysql_query($sql);
+		$result = mysql_fetch_row($query);
+		$new_balance = $result[0];
 		
-		if ($receiver != "" || $receiver != null)
-		{
-			$query = "UPDATE contributors SET balance=balance - $weighted_perf where contributor='$receiver'";
-			$result = mysql_query($query);
-			if (!$result) {
-				print("Query failed: " . mysql_error());
-			}
-		}
+		$sql	= "UPDATE service SET receiver_id='$receiver_id',receiver_balance='$new_balance' where service_id='$srv_id'";
+		$this->do_query($sql);
 	}
-
 ?>
 
 

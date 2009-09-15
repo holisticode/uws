@@ -3,6 +3,7 @@ $hostname="localhost";
 $dbuser="root"; 
 $dbpass="mysqlroot";
 $dbName="uws_devel";
+//$dbName="uws";
 
 
 mysql_connect($hostname, $dbuser, $dbpass)  or  die( "Unable  to  connect to  SQL  server");

@@ -76,14 +76,14 @@
 	}
 	
 	
-	$sql = "SELECT service FROM services";
+	$sql = "SELECT service FROM servicelist";
 	$query = mysql_query($sql);
 	$services_list = array();
 	while ($result = mysql_fetch_array($query)) {
 		array_push($services_list, current($result));
 	}
 	
-	$sql = "SELECT contributor FROM contributors";
+	$sql = "SELECT name FROM members";
 	$query = mysql_query($sql);
 	$user_list = array();
 	while ($result = mysql_fetch_array($query)) {

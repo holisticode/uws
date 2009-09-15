@@ -53,7 +53,7 @@ if (isset($_POST['submit'])) {
 	}
 	
 	$usercheck = $_POST['username'];
-	$check = mysql_query("SELECT contributor FROM contributors WHERE contributor = '$usercheck'")
+	$check = mysql_query("SELECT name FROM members WHERE name = '$usercheck'")
 	or die(mysql_error());
 	$check2 = mysql_num_rows($check);
 
@@ -75,8 +75,9 @@ if (isset($_POST['submit'])) {
 	}
 
 	// now we insert it into the database
-	$insert = "INSERT INTO contributors (contributor, password)
-	VALUES ('".$_POST['username']."', '".$_POST['pass']."')";
+	$time = time();
+	$insert = "INSERT INTO members (join_date,name, password,cell_id)
+	VALUES ($time,'".$_POST['username']."', '".$_POST['pass']."',$DEFAULT_CELL_ID)";
 	$add_member = mysql_query($insert);
 ?>
 

@@ -1,49 +1,77 @@
 <?php
 	$username		= $_SESSION['uname'];
 
-	$unit 			= $_POST['unit'];
+	$asset 			= $_POST['unit'];
 	$desc 			= $_POST['desc'];
 	$user 			= $_POST['user'];
 	$donate			= $_POST['donate'];
 	$factor 		= $_POST['factor'];
-	$value			= $_POST['value'];
-	$weighted_val 	= $_POST['weighted_val'];
-	$storyLink 		= $_POST['storyLink'];
-
+	$amount_physical= $_POST['value'];
+	$amount_inventory = $_POST['weighted_val'];
+	$link 			= $_POST['storyLink'];
+	
+	$is_donation	= 1;
+	if (! isset($_POST['donate']))
+	{
+		$is_donation = 0;
+	}
+	
 	include "config.php";
 	
-	//first check that the unit exists; if not: add.
-	$sql 	= ("SELECT unit FROM units WHERE unit = '$unit'");
+	//first check that the asset exists; if not: add.
+	$sql 	= "SELECT asset FROM assetlist WHERE asset = '$asset'";
 	$query 	= mysql_query($sql);
-	$exists = '';
+	$exists = '';	
 	
-	while ($result = mysql_fetch_array($query)) {
-		$exists = $result['unit'];
+	while ($result = mysql_fetch_array($query)) 
+	{
+		$exists = $result['asset'];
 	}
-	$date = time();
+	$date 		= time();
+	$asset_id 	= '';
+	
 	if ($exists == '') {
-		$query = "INSERT into units values ('','$date','$unit','0','0','$factor','')";
+		$query = "INSERT into assetlist values ('','$date','$asset','0','0','$factor','')";
 		$result = mysql_query($query);
 		if (!$result) {
 			$header("Location:error.php?error=Query failed: " . mysql_error());
 		} else {
-			$user_1_journal_id = mysql_insert_id();
+			$asset_id = mysql_insert_id();
 		}
-	}
-	
-	
-	$date = time();
-
-	$query = "INSERT into inventorize values ('','$date','$username','$unit','$desc','$value','$factor','')";
-	$result = mysql_query($query);
-	if (!$result) {
-		print("Query failed: " . mysql_error());
 	} else {
-		$user_1_journal_id = mysql_insert_id();
+		$asset_id	= get_asset_id_from_name($asset);
 	}
 	
+	$member_id	= get_member_id_from_name($user);
+	$sql 		= "SELECT balance FROM members WHERE member_id='$member_id'";
+	$query		= mysql_query($sql);
+	$result		= mysql_fetch_row($query);
+	$balance	= $result[0];	
 	
-	if (! isset($_POST['donate']))
+	$timestamp	= time();
+
+	$sql 		= "INSERT INTO transactions VALUES ".
+			   			"('','$timestamp','$INVENTORIZE_TYPE','0','$member_id','','$factor','$link','$balance')";
+	//print $sql."<br><br>";
+	$ta_id 		= do_query($sql);
+	
+	//print "asset_id: ".$asset_id;							  
+	$sql 		= "INSERT INTO inventorize VALUES('','$ta_id','$asset_id','$is_donation','$amount_physical','$amount_inventory')";
+	$inv_id 	= do_query($sql);
+	
+	$sql		= "UPDATE transactions SET transaction_id='$inv_id' where journal_id='$ta_id'";
+	do_query($sql);
+	
+	$sql		= "UPDATE totals SET total_inventory=total_inventory + $amount_inventory";
+	do_query($sql);
+	
+	$sql		= "UPDATE assetlist SET inventory=inventory + $amount_inventory where asset_id='$asset_id'";
+	do_query($sql);
+	
+	$sql		= "UPDATE assetlist SET physical=physical + $amount_physical where asset_id='$asset_id'";
+	do_query($sql);
+	
+	if (! $is_donation)
 	{		
 		$sql = "SELECT * FROM uwstotals";
 		$query = mysql_query($sql);
@@ -52,22 +80,21 @@
 		$total_inventory 	= 0;
 		if (!$result) {
 			$header("Location:error.php?error=Query failed: " . mysql_error());
-		} else {
-			while ($result = mysql_fetch_array($query)) {
+		} else 
+		{
+			while ($result = mysql_fetch_array($query)) 
+			{
 				$total_services 	= $result['total_services'];
 				$total_inventory 	= $result['total_inventory'];
 			}
 			//echo "weighted: " . $weighted_val;
-			$service_units = $weighted_val * $total_services / $total_inventory;
+			$service_units = $amount_inventory * $total_services / $total_inventory;
 			//echo "service units earned = $service_units";
-			$sql = "UPDATE contributors SET balance=balance+$service_units where contributor='$user'";
-			$result = mysql_query($sql);
-		
-			if (!$result) {
-				$header("Location:error.php?error=Query failed: " . mysql_error());
-			} else {
-				$user_1_journal_id = mysql_insert_id();
-			}
+			$sql = "UPDATE members SET balance=balance+$service_units where member_id='$member_id'";
+			do_query($sql);
+			$balance = $balance + $service_units;
+			$sql = "UPDATE transactions SET balance='$balance' where journal_id='$ta_id'";
+			do_query($sql);				
 		}
 	}
 ?>

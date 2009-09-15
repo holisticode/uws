@@ -41,28 +41,29 @@
    	</tr>
 
 <?php
-   	$sql = ("SELECT * from services");
+   	$sql = "SELECT * from servicelist";
    	$query = mysql_query($sql);
    	$cnt=0;
    	$tdnorm = '<td class="spec">';
    	$tdalt  = '<td class="specalt">';
    	$td = $tdnorm;
-   	while ($result = mysql_fetch_array($query)) {
+   	while ($result = mysql_fetch_array($query)) 
+   	{
 		if ($cnt%2 == 0) {
 			$td = $tdnorm;
 		} else {
 			$td = $tdalt;
 		}
-        	echo "<tr>";
-                $service = $result['service'];
-                $delivered = $result['delivered'];
-			echo $td . $service . "</td>";
-			echo $td . $delivered . "</td>";
-        	echo "</tr>";
-	$cnt++;
+    	echo "<tr>";
+        $service = $result['service'];
+        $delivered = $result['provided'];
+		echo $td . $service . "</td>";
+		echo $td . $delivered . "</td>";
+    	echo "</tr>";
+		$cnt++;
    }
    
-   $sql   	= ("SELECT total_services from uwstotals;");
+   $sql   	= "SELECT total_services from totals";
    $query 	= mysql_query($sql);
    $srvsum	= mysql_fetch_row($query);
    
