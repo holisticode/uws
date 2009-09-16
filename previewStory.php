@@ -55,9 +55,11 @@ body {
 
 <?php
 	$HTTP_METHOD_VAR = $_GET;
+	$submit	= "disabled";
 	if (! isset($_GET['storyLink']))
 	{
 		$HTTP_METHOD_VAR = $_POST;
+		$submit = "";
 	}
 	$storyLink 	= $HTTP_METHOD_VAR['storyLink'];
 	$desc		= $HTTP_METHOD_VAR['desc'];
@@ -210,7 +212,7 @@ body {
           <td colspan="4"><div align="left" class="text">
             <input type="submit" name="button" id="button" style="width:150px" value="<?php echo translate("uws:update_story")?>" />
             <br />
-            <input type="button" name="button2" id="button2" style="width:150px" value="<?php echo translate("uws:save_record")?>" onclick="javascript:saveStory()" />
+            <input type="button" name="button2" id="button2" style="width:150px" value="<?php echo translate("uws:save_record")?>" onclick="javascript:saveStory()" <?php echo $submit?> />
             <br />
             <br />
           </div></td>

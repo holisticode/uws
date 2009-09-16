@@ -36,7 +36,7 @@
         	}
         	if (price > balance){
         		var invalid= "<?php echo translate('uws:price_above_balance')?>";
-        		alert();
+        		alert(invalid);
         		return false;
         	}
         	if (bid > max_bid)
@@ -123,8 +123,12 @@
 	$my_share_price	= 0;
 	
 	//TODO: if unitID not set, first offer to choose unit
-	$sql = "SELECT unit,inventory,physical,factor from assetlist where asset_id='" . $unitID . "'";
+	$sql = "SELECT asset,inventory,physical,last_factor from assetlist where asset_id='" . $asset_id . "'";
    	$query = mysql_query($sql);
+   	if (!query)
+   	{
+   		die("Error: Query failed. ".mysql_error());
+   	}
    	while ($result = mysql_fetch_array($query)) 
    	{
    		$inventory 	= $result['inventory'];

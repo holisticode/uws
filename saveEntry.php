@@ -3,7 +3,10 @@
 <?php
 	
 	include "config.php";
-
+	$target = "home.php";
+	
+try
+{
 	$contribution 	= $_POST['contribution'];
 	$desc 			= $_POST['desc'];
 	$user	 		= $_POST['user_1'];
@@ -15,9 +18,22 @@
 	
 	$member_id		= get_member_id_from_name($user);
 	$receiver_id	= null;
-	if ($receiver != '' || $receiver != null)
+	$ta_has_receiver = null;
+	if ((isset($_POST['user_2'])) && $_POST['user_2'] != "")
 	{
+		$ta_has_receiver = 1;		
 		$receiver_id 	= get_member_id_from_name($receiver);
+		
+		$sql 	= "SELECT balance FROM members WHERE member_id='$receiver_id'";
+		$query  = mysql_query($sql);
+		$result = mysql_fetch_row($query);
+		$balance = $result[0];
+		
+		if ($balance < $service_units)
+		{
+			throw new Exception(translate("uws:insufficient_balance"));	
+		}
+		
 	}
 	
 	//checking for the existence of the service should not be 
@@ -53,23 +69,23 @@
 	$srv_id = do_query($sql);
 	
 	$sql	= "UPDATE transactions SET transaction_id='$srv_id' where journal_id='$ta_id'";
-	$this->do_query($sql);
+	do_query($sql);
 	
 	$sql	= "UPDATE members SET balance=balance + $service_units where member_id='$member_id'";
-	$this->do_query($sql);
+	do_query($sql);
 	
-	if ($receiver == '' || $receiver == null)
+	if (! $ta_has_receiver)
 	{
 		$sql	= "UPDATE totals SET total_services=total_services + $service_units";
-		$this->do_query($sql);
+		do_query($sql);
 	
 		$sql	= "UPDATE servicelist SET provided=provided + $service_units where service_id='$service'";
-		$this->do_query($sql);
+		do_query($sql);
 	}
 	else
 	{
 		$sql	= "UPDATE members SET balance=balance - $service_units where member_id='$receiver_id'";
-		$this->do_query($sql);
+		do_query($sql);
 	}
 	
 	
@@ -79,19 +95,24 @@
 	$new_balance = $result[0];
 	
 	$sql	= "UPDATE transactions SET transaction_id='$srv_id',balance='$new_balance' where journal_id='$ta_id'";
-	$this->do_query($sql);
+	do_query($sql);
 	
 	
-	if ($receiver != '' || $receiver != null)
+	if ($ta_has_receiver)
 	{
 		$sql 	= "SELECT balance FROM members WHERE member_id='$receiver_id'";
 		$query  = mysql_query($sql);
 		$result = mysql_fetch_row($query);
 		$new_balance = $result[0];
 		
-		$sql	= "UPDATE service SET receiver_id='$receiver_id',receiver_balance='$new_balance' where service_id='$srv_id'";
-		$this->do_query($sql);
+		$sql	= "UPDATE service SET receiver_id='$receiver_id',receiver_balance='$new_balance' where journal_id='$srv_id'";
+		do_query($sql);
 	}
+} catch (Exception $e)
+{
+	$msg = $e->getMessage();
+	$target = $errorpage.$msg;
+}
 ?>
 
 
@@ -103,7 +124,7 @@
 
 <script language="JavaScript">
 <!-- Begin
-	document.location.href = "home.php";
+	document.location.href = "<?php echo $target ?>";
 	
 	
 // End -->

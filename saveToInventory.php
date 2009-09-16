@@ -1,7 +1,7 @@
 <?php
 	$username		= $_SESSION['uname'];
 
-	$asset 			= $_POST['unit'];
+	$asset 			= $_POST['asset'];
 	$desc 			= $_POST['desc'];
 	$user 			= $_POST['user'];
 	$donate			= $_POST['donate'];
@@ -18,29 +18,37 @@
 	
 	include "config.php";
 	
+	//the following check should not be needed anymore, as the
+	//asset comes from a list of existing assets
+	
 	//first check that the asset exists; if not: add.
-	$sql 	= "SELECT asset FROM assetlist WHERE asset = '$asset'";
-	$query 	= mysql_query($sql);
-	$exists = '';	
+//	$sql 	= "SELECT asset FROM assetlist WHERE asset = '$asset'";
+//	$query 	= mysql_query($sql);
+//	$exists = '';	
+//	
+//	while ($result = mysql_fetch_array($query)) 
+//	{
+//		$exists = $result['asset'];
+//	}
+//	$date 		= time();
+//	$asset_id 	= '';
 	
-	while ($result = mysql_fetch_array($query)) 
-	{
-		$exists = $result['asset'];
-	}
-	$date 		= time();
-	$asset_id 	= '';
+//	if ($exists == '') 
+//	{
+//		$query = "INSERT into assetlist values ('','$date','$asset','0','0','$factor','')";
+//		$result = mysql_query($query);
+//		if (!$result) {
+//			header("Location:error.php?error=Query failed: " . mysql_error());
+//		} else {
+//			$asset_id = mysql_insert_id();
+//		}
+
+	//maybe do something...??? maybe delete this whole section
 	
-	if ($exists == '') {
-		$query = "INSERT into assetlist values ('','$date','$asset','0','0','$factor','')";
-		$result = mysql_query($query);
-		if (!$result) {
-			$header("Location:error.php?error=Query failed: " . mysql_error());
-		} else {
-			$asset_id = mysql_insert_id();
-		}
-	} else {
-		$asset_id	= get_asset_id_from_name($asset);
-	}
+//	} //else 
+//	{
+	$asset_id	= get_asset_id_from_name($asset);
+//  }	
 	
 	$member_id	= get_member_id_from_name($user);
 	$sql 		= "SELECT balance FROM members WHERE member_id='$member_id'";
@@ -51,7 +59,7 @@
 	$timestamp	= time();
 
 	$sql 		= "INSERT INTO transactions VALUES ".
-			   			"('','$timestamp','$INVENTORIZE_TYPE','0','$member_id','','$factor','$link','$balance')";
+			   			"('','$timestamp','$INVENTORIZE_TYPE','0','$member_id','$desc','$factor','$link','$balance')";
 	//print $sql."<br><br>";
 	$ta_id 		= do_query($sql);
 	
@@ -71,15 +79,18 @@
 	$sql		= "UPDATE assetlist SET physical=physical + $amount_physical where asset_id='$asset_id'";
 	do_query($sql);
 	
-	if (! $is_donation)
-	{		
-		$sql = "SELECT * FROM uwstotals";
-		$query = mysql_query($sql);
-		
+	if ($is_donation == 0)
+	{	
 		$total_services 	= 0;
 		$total_inventory 	= 0;
-		if (!$result) {
-			$header("Location:error.php?error=Query failed: " . mysql_error());
+			
+		//error_log("is not a donation, is donation is 0");
+		$sql = "SELECT * FROM totals";
+		$query = mysql_query($sql);		
+		if (!$query) 
+		{
+			header("Location: ". $errorpage.urlencode("Query failed: ". mysql_error()));
+			
 		} else 
 		{
 			while ($result = mysql_fetch_array($query)) 
@@ -94,7 +105,11 @@
 			do_query($sql);
 			$balance = $balance + $service_units;
 			$sql = "UPDATE transactions SET balance='$balance' where journal_id='$ta_id'";
-			do_query($sql);				
+			do_query($sql);
+			
+			$sql = "UPDATE totals SET total_services=total_services + $service_units";
+			do_query($sql);
+															
 		}
 	}
 ?>

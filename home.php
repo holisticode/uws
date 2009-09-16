@@ -56,7 +56,7 @@
    	$userbalance = 0;
    	while ($result = mysql_fetch_array($query)) 
    	{
-       		$userbalance = $result['balance'];
+       	$userbalance = $result['balance'];
    	}
    	$totalServices = 0;
    	$sql = ("SELECT total_services from totals");
@@ -153,7 +153,22 @@
    		$ta_types[$key] = $value;
    	}   	
    	
+   	$sql 	= "SELECT transaction_id,receiver_balance FROM service WHERE receiver_id='$member_id'";
+   	$query 	= mysql_query($sql);
+   	$rarray = array();
+   	while($result = mysql_fetch_array($query))
+   	{
+   		$rarray[$result[0]] = $result[1];
+   	}
+   	
+   	$list = "";
    	$sql = "SELECT * FROM transactions WHERE member_id = '$member_id'";
+   	if (count($rarray) > 0) 
+   	{   	
+   		$list = implode(",",array_keys($rarray));
+   		$sql  = $sql." OR journal_id IN($list)";
+   	} 
+   	//echo "SQL: ".$sql;
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query))
    	{
@@ -165,8 +180,9 @@
 		$type_code 	= $result['transaction_type'];
 		$ta_type	= $ta_types[$type_code];
 		$transaction_id = $result['transaction_id'];
-		$transaction= get_transaction($type_code,$transaction_id);
-		$ta_id 		= $result['journal_id'];		
+		$ta_id 		= $result['journal_id'];
+		$transaction= get_transaction($type_code,$ta_id);
+				
 	    echo "<tr>";
         $date 		= $result['tstamp'];
         echo $td . date('Y M d H:i:s',$date) . $tde;
@@ -176,6 +192,11 @@
         $desc = $result['description'];
         echo $td . $desc . $tde;
         $balance = $result ['balance'];
+        if (array_key_exists($ta_id,$rarray))
+        {        	
+        	$balance = $rarray[$ta_id];
+        }
+        
         echo $td . $balance . $tde; 
         echo $td;
         echo '<a href="viewTransaction.php?taID=' . $ta_id .

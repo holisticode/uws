@@ -6,6 +6,7 @@
 					<!-- admin users should be able to add users here -->
 					<li><a href="createEntry.php"><?php echo translate("uws:create_entry") ?></a></li>
 					<li><a href="createService.php"><?php echo translate("uws:create_service") ?></a></li>
+					<li><a href="createAsset.php"><?php echo translate("uws:create_asset") ?></a></li>
 					<li><a href="addToInventory.php"><?php echo translate("uws:add_inventory") ?></a></li>
 				</ul>
 			</div>

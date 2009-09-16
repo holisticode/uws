@@ -14,7 +14,7 @@
 
 
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>Universal Wealth System UWS - <?php echo translate("uws:create_service") ?></title>
+<title>Universal Wealth System UWS - <?php echo translate("uws:create_asset") ?></title>
 <meta name="keywords" content="" />
 <meta name="description" content="" />
 <link rel="stylesheet" type="text/css" href="default.css" />
@@ -37,7 +37,7 @@
 	<div id="inner">
 
 		<?php include "header.php" ?>
-					<h3><?php echo translate("uws:create_service") ?></h3>
+					<h3><?php echo translate("uws:create_asset") ?></h3>
 					<div class="date">
 <?php
 	echo date('d F Y') ?></div>
@@ -46,53 +46,56 @@
 <?php
 	//echo "isset: " .isset($_SESSION['uname']);	
 	
-	$services_list = array();
-	$service = "";
+	$asset_list = array();
+	$asset = "";
 	$desc 	 = "";
 	
-	if (isset($_POST['save_srv']))
+	if (isset($_POST['save_asset']))
 	{
-		$service 	= $_POST['service'];	
-		$desc 		= $_POST['desc'];
+		$asset 	= $_POST['asset'];	
+		$desc 	= $_POST['desc'];
+		$factor = $_POST['factor'];
 		
-		$sql = "SELECT service FROM servicelist";
+		$sql = "SELECT asset FROM assetlist";
 		$query = mysql_query($sql);
 		//$services_list = array();
-		while ($result = mysql_fetch_array($query)) {
-			array_push($services_list, current($result));
+		while ($result = mysql_fetch_array($query)) 
+		{
+			array_push($asset_list, current($result));
 		}
 	}
 		
 	
 ?>
-	<form name="service" id="service" action="createService.php" method="post" enctype="multipart/form-data">
+	<form name="asset" id="asset" action="<?php echo $_SERVER['PHP_SELF']?>" method="post" enctype="multipart/form-data">
 <table class="formtable" width="470" cellspacing="0" cellpadding="0">
         <?php
-        if (in_array($service, $services_list))
+        if (in_array($asset, $asset_list))
 		{
-			echo $service . translate("uws:existing");	
+			echo $asset . translate("uws:existing");	
 		} 
 		else {
-			if (isset($_POST['save_srv']))
+			if (isset($_POST['save_asset']))
 			{
 				$time = time();
-				$sql = "INSERT INTO servicelist VALUES ('','$time','$service','0','$desc')";
+				$sql = "INSERT INTO assetlist VALUES ('','$time','$asset','0','0','$factor','$desc')";
 				$query = mysql_query($sql);
-				if ($query) {
-					echo translate("uws:srv_insert_ok");
-				}else
+				if ($query) 
 				{
-					echo translate("uws:srv_insert_not_ok")." ". mysql_error();
+					echo translate("uws:asset_insert_ok");
+				} else
+				{
+					echo translate("uws:asset_insert_not_ok")." ". mysql_error();
 				}
 				
 			}
 		}
         ?>
         <tr>
-          <td width="50" class="text"><?php echo translate("uws:service") ?></td>
+          <td width="50" class="text"><?php echo translate("uws:asset") ?></td>
           <td width="5">&nbsp;</td>
           <td><span class="text">
-             <input name="service" type="text" id="service" value="<?php echo $service?>" size="30" /> 
+             <input name="asset" type="text" id="asset" value="<?php echo $asset?>" size="30" /> 
           </span></td>
         </tr>
         <tr>
@@ -106,11 +109,22 @@
           <td><span class="text"><input name="desc" type="text" id="desc" value="<?php echo $desc ?>" size="30" />
           </span></td>
         </tr>
+        <tr>
+          <td width="50">&nbsp;</td>
+          <td width="5">&nbsp;</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td width="50" class="text"><?php echo translate("uws:factor") ?></td>
+          <td width="5">&nbsp;</td>
+          <td><span class="text"><input name="factor" type="text" id="factor" value="<?php echo $factor ?>" size="30" />
+          </span></td>
+        </tr>
     
       <p>&nbsp;</p>
         <tr>
           <td colspan="4"><div align="left" class="text">
-            <input type="submit" name="save_srv" id="save_srv" value="<?php echo translate("uws:save") ?>" />
+            <input type="submit" name="save_asset" id="save_asset" value="<?php echo translate("uws:save") ?>" />
             <br />    
           </div></td>
           <td width="80">&nbsp;</td>

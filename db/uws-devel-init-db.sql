@@ -39,7 +39,7 @@ INSERT INTO settings VALUES('0');
 -- Information about the uws cell
 --
 CREATE  TABLE `network` (
-  `cell_id` INT UNSIGNED NOT NULL ,
+  `cell_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `cell_name` VARCHAR(45) NOT NULL ,
   `cell_clearing_id` VARCHAR(45) NOT NULL DEFAULT '',
   PRIMARY KEY (`cell_id`) 
@@ -58,14 +58,27 @@ CREATE TABLE `members` (
   `name` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL default '',
   `cell_id` INT UNSIGNED,
+  `account_id` INT UNSIGNED
   `balance` DECIMAL(15,6) NOT NULL default '0',
   `email` VARCHAR(45),
   `color` CHAR(8) NOT NULL DEFAULT 'OxF0F0F0',
   `avatar_link` VARCHAR(255),
   `description` mediumtext,
-  PRIMARY KEY  (`member_id`)
+  PRIMARY KEY  (`member_id`),
+  FOREIGN KEY  (`account_id`) REFERENCES account(`account_id`),
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `members`
+-- Information about a member
+
+CREATE TABLE `account` (
+	`account_id` INT UNSIGNED NOT NULL auto_increment,
+	`transaction_id` INT UNSIGNED
+  	
+)
 
 -- --------------------------------------------------------
 --

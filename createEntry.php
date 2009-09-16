@@ -47,10 +47,12 @@
 	//echo "isset: " .isset($_SESSION['uname']);
 	$username 	= $_SESSION['uname'];
 	$user_1		= "";
+	$submit    		  = "disabled";
 	
 	if (isset($_POST['update']))
 	{
 		$user_1 	= $_POST['user_1'];	
+		$submit = "";
 	}
 	else {
 		$user_1		= $username;
@@ -94,7 +96,7 @@
 	
 	
 ?>
-	<form name="story" id="story" action="createEntry.php" method="post" enctype="multipart/form-data">
+	<form name="story" id="story" action="<?php echo $_SERVER['PHP_SELF']?>" method="post" enctype="multipart/form-data">
 <table class="formtable" width="470" cellspacing="0" cellpadding="0">
         <tr>
           <td width="50" class="text"><?php echo translate("uws:user") ?></td>
@@ -210,7 +212,7 @@
             <input type="submit" name="update" id="update" value="<?php echo translate("uws:calc_srv_units") ?>" />
             <br />
             <br />
-            <input type="button" name="button2" id="button2" value="<?php echo translate("uws:save_record") ?>" onclick="javascript:saveStory()" />
+            <input type="button" name="button2" id="button2" value="<?php echo translate("uws:save_record") ?>" onclick="javascript:saveStory()" <?php echo $submit ?> />
             <br />
             <br />
           </div></td>

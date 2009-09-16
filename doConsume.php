@@ -24,7 +24,7 @@ try {
 			   		"('','$timestamp','$CONSUME_TYPE','0','$member_id','$desc','$factor','$link','$balance')";
 	$ta_id 	= do_query($sql);
 	
-	$sql 	= "INSERT INTO consume VALUES('','$date','$ta_id','$asset_id','$bid','$price')";
+	$sql 	= "INSERT INTO consume VALUES('','$ta_id','$asset_id','$bid','$price')";
 	$bid_id = do_query($sql);
 	
 	//transactions saved, now update balances
@@ -50,7 +50,7 @@ try {
 	$new_balance = $result[0];
 	
 	$sql	= "UPDATE transactions SET transaction_id='$bid_id',balance='$new_balance' where journal_id='$ta_id'";
-	$this->do_query($sql);
+	do_query($sql);
 	
 }catch (Exception $e)
 {

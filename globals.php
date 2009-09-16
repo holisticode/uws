@@ -3,6 +3,10 @@ $SERVICE_TYPE 		= 1;
 $INVENTORIZE_TYPE 	= 2;
 $CONSUME_TYPE 		= 3;
 
+$DEFAULT_CELL = "OS";
+$DEFAULT_CELL_ID = 0;
+
+$INITIALIZED = 0;
 $errorpage = "error.php?error=";
 
 $defaultlang = "de";
@@ -211,8 +215,7 @@ function do_query($query)
 	}	
 }	
 
-$DEFAULT_CELL = "OS";
-$DEFAULT_CELL_ID = "";
+
 // include class
 require_once 'Log.php';
 

@@ -1,9 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <?php
 	include_once "config.php";
 	
-	$storyLink 	= $_GET['storyLink'];
+	$INSERT_NEW_USERS = 0;
+	
+	$storyLink 	= $_POST['storyLink'];
 	
 	$users 			= array();
 	$user_values 	= array();
@@ -20,9 +20,7 @@
 	
 	try
 	{
-		$date = time();
-	
-		foreach($_GET as $key=>$value)
+		foreach($_POST as $key=>$value)
 		{
 			//print "KEY: ".$key." - VALUE: ".$value;
 			if (strncmp($user_key,$key, 5) === 0)
@@ -63,19 +61,26 @@
 			$query = mysql_query($sql);
 			$result = mysql_fetch_row($query);
 			$user_id = $result[0];
-			
+						
 			if ($user_id == "") 
 			{
-				//neuer user
-				$timestamp = time();
-				$password  = md5($user."123");			
-				$query = "INSERT into members values (join_date,name, password,cell_id)." .
-						 "('', '$timestamp',$user,$password,$DEFAULT_CELL_ID)";
-				$result = mysql_query($query);
-				if (!$result) {
-					print("Query failed: " . mysql_error());
-				} else {
-					$user_id = mysql_insert_id();
+				if ($INSERT_NEW_USERS)
+				{			
+					//neuer user
+					$timestamp = time();
+					$password  = md5($user."123");			
+					$query = "INSERT into members values (join_date,name, password,cell_id)." .
+							 "('', '$timestamp',$user,$password,$DEFAULT_CELL_ID)";
+					$result = mysql_query($query);
+					if (!$result) {
+						print("Query failed: " . mysql_error());
+					} else {
+						$user_id = mysql_insert_id();
+					}
+				} else
+				{
+					$msg = translate("uws:user_not_existing");
+					throw new Exception($msg);
 				}
 			}
 			
@@ -90,6 +95,7 @@
 			
 			$service_units = $work * $factor;
 			$balance = $balance + $service_units;
+			$timestamp = time();
 			 
 			$service_id = get_service_id_from_name($contribution);
 			
@@ -107,7 +113,7 @@
 			do_query($sql);
 			
 			$sql	= "UPDATE servicelist SET provided=provided + $service_units where service_id='$service_id'";
-			$this->do_query($sql);
+			do_query($sql);
 			
 			$sql	= "UPDATE members SET balance=balance + $service_units where member_id='$user_id'";
 			do_query($sql);
@@ -115,7 +121,7 @@
 		} //foreach user
 	} catch (Exception $e)
 	{
-		$redirectto = "error.php?error=$e";
+		header("Location: ".$errorpage.$e->getMessage());
 	}
 		
 			//Alte Story
@@ -126,7 +132,7 @@
 	//$redirectto = "error.php?error=$errormsg";	
 		
 ?>
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>

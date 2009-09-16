@@ -14,7 +14,7 @@
 
 
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>Universal Wealth System UWS - <?php echo translate("uws:bid") ?> </title>
+<title>Universal Wealth System UWS - <?php echo translate("uws:view") ?> </title>
 <meta name="keywords" content="" />
 <meta name="description" content="" />
 <link rel="stylesheet" type="text/css" href="default.css" />
@@ -176,9 +176,9 @@
 				$service_id  = $result['service_id'];
 				$lifetime	 = $result['lifetime'];
 			}
-			
-			$receiver = get_member_name_from_id($receiver_id);
-			$service  = get_service_name_from_id($service_id);
+			$member		= get_member_name_from_id($member_id);
+			$receiver 	= get_member_name_from_id($receiver_id);
+			$service  	= get_service_name_from_id($service_id);
 			$service_units = $lifetime * $factor;
 			?>
 				<tr>
@@ -186,19 +186,27 @@
 		        <th scope="col" abbr="Service"><?php echo translate("uws:service") ?></th>
 		        <th scope="col" abbr="Description"><?php echo translate("uws:desc") ?></th>
 			    <th scope="col" abbr="Who"><?php echo translate("uws:user") ?></th>
-			    <th scope="col" abbr="Receiver"><?php echo translate("uws:receiver") ?></th>			   
-			    <th scope="col" abbr="Lifetime"><?php echo translate("uws:time") ?></th>
-			    <th scope="col" abbr="Delivered"><?php echo translate("uws:service_units") ?></th>
-			    <th scope="col" abbr="Factor"><?php echo translate("uws:factor") ?></th>
 			   	</tr>
 			<?php
-			$td  = "<td>";
+			$td  = "<td align=\"center\">";
 			$tde = "</td>";
 			
 			echo $td . date('Y M d H:i:s',$timestamp) . $tde;
 			echo $td . $service . $tde;
 			echo $td . $desc . $tde;
-			echo $td . $member_id . $tde;
+			echo $td . $member . $tde;
+			
+?>
+		</tr></table>
+		<br><br>
+		<table class="nicetable" cellspacing="0">
+		<tr>
+			<th scope="col" abbr="Receiver"><?php echo translate("uws:receiver") ?></th>			   
+			<th scope="col" abbr="Lifetime"><?php echo translate("uws:time") ?></th>
+			<th scope="col" abbr="Delivered"><?php echo translate("uws:service_units") ?></th>
+			<th scope="col" abbr="Factor"><?php echo translate("uws:factor") ?></th>
+		</tr>
+		<?php
 			echo $td . $receiver . $tde;
 			echo $td . $lifetime . $tde;
 			echo $td . $service_units . $tde;
@@ -228,19 +236,27 @@
 		        <th scope="col" abbr="Asset"><?php echo translate("uws:asset") ?></th>
 		        <th scope="col" abbr="Description"><?php echo translate("uws:desc") ?></th>
 			    <th scope="col" abbr="Who"><?php echo translate("uws:user") ?></th>
-			    <th scope="col" abbr="Donation"><?php echo translate("uws:donation") ?></th>			   
-			    <th scope="col" abbr="Physical"><?php echo translate("uws:amount_physical") ?></th>
-			    <th scope="col" abbr="Inventory"><?php echo translate("uws:amount_inventory") ?></th>
-			    <th scope="col" abbr="Factor"><?php echo translate("uws:factor") ?></th>
-			   	</tr>
+			    </tr>
 			<?php
-			$td  = "<td>";
+			$td  = "<td align=\"center\">";
 			$tde = "</td>";
 			
 			echo $td . date('Y M d H:i:s',$timestamp) . $tde;
 			echo $td . $asset . $tde;
 			echo $td . $desc . $tde;
 			echo $td . $member_id . $tde;
+			
+	?>
+	</tr></table>
+		<br><br>
+		<table class="nicetable" cellspacing="0">
+		<tr>
+			<th scope="col" abbr="Donation"><?php echo translate("uws:donation") ?></th>			   
+			<th scope="col" abbr="Physical"><?php echo translate("uws:amount_physical") ?></th>
+			<th scope="col" abbr="Inventory"><?php echo translate("uws:amount_inventory") ?></th>
+			<th scope="col" abbr="Factor"><?php echo translate("uws:factor") ?></th>
+		</tr>
+		<?php
 			$donation = "uws:no";
 			if ($is_donation){
 				$donation = "uws:yes";
@@ -274,18 +290,25 @@
 		        <th scope="col" abbr="Asset"><?php echo translate("uws:asset") ?></th>
 		        <th scope="col" abbr="Description"><?php echo translate("uws:desc") ?></th>
 			    <th scope="col" abbr="Who"><?php echo translate("uws:user") ?></th>
-			    <th scope="col" abbr="Amount"><?php echo translate("uws:amount") ?></th>			   
-			    <th scope="col" abbr="Price"><?php echo translate("uws:price") ?></th>
-			    <th scope="col" abbr="Factor"><?php echo translate("uws:factor") ?></th>
-			   	</tr>
+			    </tr>
 			<?php
-			$td  = "<td>";
+			$td  = "<td align=\"center\">";
 			$tde = "</td>";
 			
 			echo $td . date('Y M d H:i:s',$timestamp) . $tde;
 			echo $td . $asset . $tde;
 			echo $td . $desc . $tde;
 			echo $td . $member_id . $tde;
+		?>
+		</tr></table>
+		<br><br>
+		<table class="nicetable" cellspacing="0">
+			<tr>	
+		  	<th scope="col" abbr="Amount"><?php echo translate("uws:amount") ?></th>			   
+			<th scope="col" abbr="Price"><?php echo translate("uws:price") ?></th>
+			<th scope="col" abbr="Factor"><?php echo translate("uws:factor") ?></th>
+			</tr>
+		<?php
 			echo $td . $amount_physical . $tde;
 			echo $td . $price . $tde;
 			echo $td . $factor . $tde;

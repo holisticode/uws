@@ -25,14 +25,19 @@
                 document.inventorize.submit();
         }
         
-        function check_donation(){
-		if(document.inventorize.donate.checked == true){
-			document.inventorize.user.disabled = true;
-		}
-		else {
-			document.inventorize.user.disabled = false;
-		}
-	}
+//        function check_donation(){
+//	        var logged_user = document.inventorize.logged_user.value;
+//			
+//			if(document.inventorize.donate.checked == true)
+//			{
+//				//document.inventorize.user.disabled = true;
+//			}
+//			else 
+//			{
+//				document.inventorize.user.disabled = false;
+//				document.inventorize.user.value	= logged_user;
+//			}
+//	}
 
         
 
@@ -59,27 +64,59 @@
 
 	$username 		= $_SESSION['uname'];
 		
-	$user			= $_POST['user'];
+	$user			= "";
 	$factor 		= $_POST['factor'];	
-	$unit 			= $_POST['unit'];
+	$unit 			= $_POST['asset'];
 	$value 			= $_POST['value'];
 	$desc 			= $_POST['desc'];
+	
 	$weighted_val  	= $factor * $value;
 	
-	$checked = "checked";
+	$selected_asset = null;
+	$checked 		= "checked";
+	$submit    		= "disabled";
+	
+	if (isset($_POST['update']))
+	{			
+		$submit = "";
+	}
+	
 	if ( (isset($_POST['update'])) && (! isset($_POST['donate'])) )	
 	{	
 		$checked="";	
 	}
 	
+	if (isset($_POST['asset']))
+	{
+		$selected_asset = $_POST['asset'];
+	}
+	
+	if (isset($_POST['user']))
+	{
+		//echo "POST VARIABLE user set!";
+		$user = $_POST['user'];
+	}
+	else
+	{
+		$user	= $username;
+	}
+	//echo "user is: ".$user;
+	$sql = "SELECT asset FROM assetlist";
+	$query = mysql_query($sql);
+	$asset_list = array();
+	while ($result = mysql_fetch_array($query)) 
+	{
+		array_push($asset_list, current($result));
+	}
+	
 	//echo "donate isset: " . (isset($_POST['donate'])) . " - submit isset: " . ($_POST['submit']);
 ?>
-	<form name="inventorize" id="story" action="addToInventory.php" method="post" enctype="multipart/form-data">
+	<form name="inventorize" id="story" action="<?php echo $_SERVER['PHP_SELF']?>" method="post" enctype="multipart/form-data">
 <table class="formtable" width="470" cellspacing="0" cellpadding="0">
         <tr>
           <td width="50" class="text"><?php echo translate("uws:user") ?></td>
           <td width="5">&nbsp;</td>
-          <td><span class="text"><input name="user" type="text" id="user" value="<?php echo $user?>" size="30" disabled/>
+          <td><span class="text"><input name="user" type="text" id="user" value="<?php echo $user?>" size="30" />
           </span></td>
         </tr>
         <tr>
@@ -90,7 +127,22 @@
         <tr>
           <td width="50" class="text"><?php echo translate("uws:asset") ?></td>
           <td width="5">&nbsp;</td>
-          <td><span class="text"><input name="unit" type="text" id="unit" value="<?php echo $unit?>" size="30" />
+          <td><span class="text">          
+        	<!--  <input name="unit" type="text" id="unit" value="<?php echo $unit?>" size="30" /> -->
+        	 <select name="asset" size="1">
+             <?php
+             foreach ($asset_list as $asset) {
+             	echo "<option";
+             	if (! strcmp($asset,$selected_asset)) {
+             		echo " selected>";
+             	}
+             	else {
+             		echo ">";
+             	} 
+             	echo $asset ."</option";
+             }
+             ?>
+             </select>
           </span></td>
         </tr>
         <tr>
@@ -101,7 +153,7 @@
         <tr>
           <td width="50" class="text"><?php echo translate("uws:desc") ?></td>
           <td width="5">&nbsp;</td>
-          <td><span class="text"><input name="desc" type="text" id="desc" value="<?php echo $desc ?>" size="30" />
+          <td><span class="text"><input name="desc" type="text" id="desc" value="<?php echo $desc ?>" size="30"   />
           </span></td>
         </tr>
         <tr>
@@ -112,7 +164,7 @@
         <tr>
           <td width="50" class="text"><?php echo translate("uws:donation") ?></td>
           <td width="5">&nbsp;</td>
-          <td><span class="text"><input type="checkbox" name="donate" value="donate" <?php echo $checked?>  onchange=check_donation() />
+          <td><span class="text"><input type="checkbox" name="donate" value="donate" <?php echo $checked?>  />
           </span></td>
         </tr>
       </table>
@@ -160,7 +212,7 @@
             <input type="submit" name="update" id="update" value="<?php echo translate("uws:calc_weighted_val") ?>"/>
             <br />
             <br />
-            <input type="button" name="save" id="save" value="<?php echo translate("uws:save_record") ?>" onclick="javascript:saveToInventory()" />
+            <input type="button" name="save" id="save" value="<?php echo translate("uws:save_record") ?>" onclick="javascript:saveToInventory()" <?php echo $submit ?> />
             <br />
             <br />
           </div></td>
@@ -168,6 +220,7 @@
         </tr>
       </table>
       <input type="hidden" name="weighted_val" id="weighted_val" value="<?php echo $weighted_val ?>" />
+      <input type="hidden" name="logged_user" id="logged_user" value="<?php echo $username ?>" />
   </form>
 -->
 				</div>			
