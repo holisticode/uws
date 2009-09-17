@@ -6,7 +6,7 @@
  * Window - Preferences - PHPeclipse - PHP - Code Templates
 */ 
 
-$redirectto = "admin.php";
+$redirectto = "index.php";
 
 include "config.php";
 

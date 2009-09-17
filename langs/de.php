@@ -50,7 +50,7 @@
 		'uws:user_list' => 'Liste der Teilnehmer',
 		'uws:service_list' => 'Liste der Dienstleistungen',
 		'uws:assets_list' => 'Liste des Inventars',
-		'uws:usables_list' => 'Liste von Konsumgüter',
+		'uws:journal' => 'Journal',
 		'uws:lists' => 'Listen',
 		'uws:transaction' => 'Transaktion',
 		'uws:actions' => 'Aktionen',

@@ -25,23 +25,6 @@
                 document.inventorize.submit();
         }
         
-//        function check_donation(){
-//	        var logged_user = document.inventorize.logged_user.value;
-//			
-//			if(document.inventorize.donate.checked == true)
-//			{
-//				//document.inventorize.user.disabled = true;
-//			}
-//			else 
-//			{
-//				document.inventorize.user.disabled = false;
-//				document.inventorize.user.value	= logged_user;
-//			}
-//	}
-
-        
-
-
 </script>
 </head>
 

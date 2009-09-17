@@ -205,12 +205,14 @@
 			<th scope="col" abbr="Lifetime"><?php echo translate("uws:time") ?></th>
 			<th scope="col" abbr="Delivered"><?php echo translate("uws:service_units") ?></th>
 			<th scope="col" abbr="Factor"><?php echo translate("uws:factor") ?></th>
+			<th scope="col" abbr="Link"><?php echo translate("uws:link") ?></th>
 		</tr>
 		<?php
 			echo $td . $receiver . $tde;
 			echo $td . $lifetime . $tde;
 			echo $td . $service_units . $tde;
 			echo $td . $factor . $tde;
+			echo $td . $link . $tde;
 			
 			break;
 		case $INVENTORIZE_TYPE:
@@ -255,6 +257,7 @@
 			<th scope="col" abbr="Physical"><?php echo translate("uws:amount_physical") ?></th>
 			<th scope="col" abbr="Inventory"><?php echo translate("uws:amount_inventory") ?></th>
 			<th scope="col" abbr="Factor"><?php echo translate("uws:factor") ?></th>
+			<th scope="col" abbr="Link"><?php echo translate("uws:link") ?></th>
 		</tr>
 		<?php
 			$donation = "uws:no";
@@ -265,6 +268,7 @@
 			echo $td . $amount_physical . $tde;
 			echo $td . $amount_inventory . $tde;
 			echo $td . $factor . $tde;
+			echo $td . $link . $tde;
 			
 			break;
 		case $CONSUME_TYPE:
@@ -281,9 +285,8 @@
 				$price	 	 = $result['price'];
 			}
 			
-			$receiver = get_member_name_from_id($receiver_id);
-			$service  = get_service_name_from_id($service_id);
-			$service_units = $lifetime * $factor;
+			$member = get_member_name_from_id($member_id);
+			$asset  = get_asset_name_from_id($asset_id);
 			?>
 				<tr>
 			 	<th scope="col" abbr="Date"><?php echo translate("uws:date") ?></th>
@@ -298,7 +301,7 @@
 			echo $td . date('Y M d H:i:s',$timestamp) . $tde;
 			echo $td . $asset . $tde;
 			echo $td . $desc . $tde;
-			echo $td . $member_id . $tde;
+			echo $td . $member . $tde;
 		?>
 		</tr></table>
 		<br><br>
@@ -307,12 +310,13 @@
 		  	<th scope="col" abbr="Amount"><?php echo translate("uws:amount") ?></th>			   
 			<th scope="col" abbr="Price"><?php echo translate("uws:price") ?></th>
 			<th scope="col" abbr="Factor"><?php echo translate("uws:factor") ?></th>
+			<th scope="col" abbr="Link"><?php echo translate("uws:link") ?></th>
 			</tr>
 		<?php
-			echo $td . $amount_physical . $tde;
+			echo $td . $amount . $tde;
 			echo $td . $price . $tde;
 			echo $td . $factor . $tde;
-			
+			echo $td . $link . $tde;
 			break;				
 	}
 

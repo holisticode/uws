@@ -27,21 +27,18 @@ try {
 	$sql 	= "INSERT INTO consume VALUES('','$ta_id','$asset_id','$bid','$price')";
 	$bid_id = do_query($sql);
 	
-	//transactions saved, now update balances
-	/*UPDATE units SET inventory = inventory - (amount*factor) WHERE unit=what;
-		UPDATE units SET physical = physical - amount WHERE unit=what;
-		UPDATE totals SET total_inventory = total_inventory - (amount*factor);
-		*/
-	$sql	= "UPDATE totals SET total_inventory=total_inventory - $price";
+	$inventory_subtraction = $bid * $factor;
+	
+	$sql	= "UPDATE totals SET total_inventory=total_inventory - $inventory_subtraction";
 	do_query($sql);
 		
-	$sql	= "UPDATE assetlist SET inventory=inventory - $price where asset_id='$asset_id'";
+	$sql	= "UPDATE assetlist SET inventory=inventory - $inventory_subtraction where asset_id='$asset_id'";
 	do_query($sql);
 	
 	$sql	= "UPDATE assetlist SET physical=physical - $bid where asset_id='$asset_id'";
 	do_query($sql);
 		
-	$sql	= "UPDATE members SET balance=balance - $price where member_id='$member_id'";
+	$sql	= "UPDATE members SET balance=balance - $inventory_subtraction where member_id='$member_id'";
 	do_query($sql);
 	
 	$sql 	= "SELECT balance FROM members WHERE member_id='$member_id'";
