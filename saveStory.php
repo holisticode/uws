@@ -99,25 +99,45 @@
 			 
 			$service_id = get_service_id_from_name($contribution);
 			
-			$sql 	= "INSERT INTO transactions VALUES ".
-				   		"('','$timestamp','$SERVICE_TYPE','0','$user_id','$desc','$factor','$link', $balance)";
-		    //print $sql."<br><br>";
-			$ta_id 	= do_query($sql);		
-			$sql 	= "INSERT INTO service VALUES('','$ta_id','','','$service_id','$lifetime')";
-			$srv_id = do_query($sql);
-			
-			$sql	= "UPDATE transactions SET transaction_id='$srv_id' where journal_id='$ta_id'";
-			do_query($sql);
-			
-			$sql	= "UPDATE totals SET total_services=total_services + $service_units ";
-			do_query($sql);
-			
-			$sql	= "UPDATE servicelist SET provided=provided + $service_units where service_id='$service_id'";
-			do_query($sql);
-			
-			$sql	= "UPDATE members SET balance=balance + $service_units where member_id='$user_id'";
-			do_query($sql);
-			
+			try
+			{
+				$dbh->beginTransaction();
+				
+				$sql 	= "INSERT INTO transactions VALUES ".
+					   		"('','$timestamp','$SERVICE_TYPE','0','$user_id','$desc','$factor','$link', $balance)";
+			    //print $sql."<br><br>";
+				//$ta_id 	= do_query($sql);
+				$dbh->exec($sql);		
+				$ta_id = $dbh->lastInsertId();
+				
+				$sql 	= "INSERT INTO service VALUES('','$ta_id','','','$service_id','$lifetime')";
+				$dbh->exec($sql);
+				//$srv_id = do_query($sql);
+				$srv_id = $dbh->lastInsertId();
+				
+				$sql	= "UPDATE transactions SET transaction_id='$srv_id' where journal_id='$ta_id'";
+				//do_query($sql);
+				$dbh->exec($sql);
+				
+				$sql	= "UPDATE totals SET total_services=total_services + $service_units ";
+				//do_query($sql);
+				$dbh->exec($sql);
+				
+				$sql	= "UPDATE servicelist SET provided=provided + $service_units where service_id='$service_id'";
+				//do_query($sql);
+				$dbh->exec($sql);
+				
+				$sql	= "UPDATE members SET balance=balance + $service_units where member_id='$user_id'";
+				//do_query($sql);
+				$dbh->exec($sql);
+				
+				$dbh->commit();
+				
+			} catch (Exception $e)
+			{
+				$dbh->rollback();
+				throw new Exception($e->getMessage());
+			}		
 		} //foreach user
 	} catch (Exception $e)
 	{

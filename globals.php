@@ -16,6 +16,9 @@ if (! isset($_SESSION['language']) ) {
 	$_SESSION['language'] = $defaultlang;
 }
 
+$data_accessor = new DataAccessor();
+$data_accessor->init_db_connection();
+$dbh = $data_accessor->get_connection();
 	
 $messages = array();
 

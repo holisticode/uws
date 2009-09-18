@@ -20,37 +20,60 @@ try {
 	$unit		= $_POST['unit'];
 	$asset_id 	= $_POST['asset_id'];
 	
+	
+	$dbh->beginTransaction();
+	
 	$sql 	= "INSERT INTO transactions VALUES ".
 			   		"('','$timestamp','$CONSUME_TYPE','0','$member_id','$desc','$factor','$link','$balance')";
-	$ta_id 	= do_query($sql);
+	//$ta_id 	= do_query($sql);
+	$dbh->exec($sql);
+	$ta_id = $dbh->lastInsertId();
 	
 	$sql 	= "INSERT INTO consume VALUES('','$ta_id','$asset_id','$bid','$price')";
-	$bid_id = do_query($sql);
+	//$bid_id = do_query($sql);
+	$dbh->exec($sql);
+	$bid_id = $dbh->lastInsertId();
 	
 	$inventory_subtraction = $bid * $factor;
 	
 	$sql	= "UPDATE totals SET total_inventory=total_inventory - $inventory_subtraction";
-	do_query($sql);
+	//do_query($sql);
+	$dbh->exec($sql);
 		
 	$sql	= "UPDATE assetlist SET inventory=inventory - $inventory_subtraction where asset_id='$asset_id'";
-	do_query($sql);
+	//do_query($sql);
+	$dbh->exec($sql);
 	
 	$sql	= "UPDATE assetlist SET physical=physical - $bid where asset_id='$asset_id'";
-	do_query($sql);
+	//do_query($sql);
+	$dbh->exec($sql);
 		
-	$sql	= "UPDATE members SET balance=balance - $inventory_subtraction where member_id='$member_id'";
-	do_query($sql);
+	$sql	= "UPDATE members SET balance=balance - $price where member_id='$member_id'";
+	//do_query($sql);
+	$dbh->exec($sql);
+	
+	$sql	= "UPDATE totals SET total_services=total_services - $price";
+	//do_query($sql);
+	$dbh->exec($sql);
+	
 	
 	$sql 	= "SELECT balance FROM members WHERE member_id='$member_id'";
+	/*
 	$query  = mysql_query($sql);
 	$result = mysql_fetch_row($query);
-	$new_balance = $result[0];
+	*/
+	$result = $dbh->query($sql)->fetch();
+	$new_balance = $result['balance'];
 	
 	$sql	= "UPDATE transactions SET transaction_id='$bid_id',balance='$new_balance' where journal_id='$ta_id'";
-	do_query($sql);
+	//do_query($sql);
+	$dbh->exec($sql);
+	
+	$dbh->commit();
 	
 }catch (Exception $e)
 {
+	$dbh->rollback();
 	$target = $errorpage . $e->getMessage();
 }	
 

@@ -58,59 +58,83 @@
 	
 	$timestamp	= time();
 
-	$sql 		= "INSERT INTO transactions VALUES ".
-			   			"('','$timestamp','$INVENTORIZE_TYPE','0','$member_id','$desc','$factor','$link','$balance')";
-	//print $sql."<br><br>";
-	$ta_id 		= do_query($sql);
+	try
+	{
+		$dbh->beginTransaction();
 	
-	//print "asset_id: ".$asset_id;							  
-	$sql 		= "INSERT INTO inventorize VALUES('','$ta_id','$asset_id','$is_donation','$amount_physical','$amount_inventory')";
-	$inv_id 	= do_query($sql);
-	
-	$sql		= "UPDATE transactions SET transaction_id='$inv_id' where journal_id='$ta_id'";
-	do_query($sql);
-	
-	$sql		= "UPDATE totals SET total_inventory=total_inventory + $amount_inventory";
-	do_query($sql);
-	
-	$sql		= "UPDATE assetlist SET inventory=inventory + $amount_inventory where asset_id='$asset_id'";
-	do_query($sql);
-	
-	$sql		= "UPDATE assetlist SET physical=physical + $amount_physical where asset_id='$asset_id'";
-	do_query($sql);
-	
-	if ($is_donation == 0)
-	{	
-		$total_services 	= 0;
-		$total_inventory 	= 0;
-			
-		//error_log("is not a donation, is donation is 0");
-		$sql = "SELECT * FROM totals";
-		$query = mysql_query($sql);		
-		if (!$query) 
-		{
-			header("Location: ". $errorpage.urlencode("Query failed: ". mysql_error()));
-			
-		} else 
-		{
-			while ($result = mysql_fetch_array($query)) 
+		$sql 		= "INSERT INTO transactions VALUES ".
+				   			"('','$timestamp','$INVENTORIZE_TYPE','0','$member_id','$desc','$factor','$link','$balance')";
+		//print $sql."<br><br>";
+		//$ta_id 		= do_query($sql);
+		$dbh->exec($sql);
+		$ta_id = $dbh->lastInsertId();
+		
+		//print "asset_id: ".$asset_id;							  
+		$sql 		= "INSERT INTO inventorize VALUES('','$ta_id','$asset_id','$is_donation','$amount_physical','$amount_inventory')";
+		//$inv_id 	= do_query($sql);
+		$dbh->exec($sql);	
+		$inv_id = $dbh->lastInsertId();
+		
+		$sql		= "UPDATE transactions SET transaction_id='$inv_id' where journal_id='$ta_id'";
+		$dbh->exec($sql);
+		//do_query($sql);
+		
+		$sql		= "UPDATE totals SET total_inventory=total_inventory + $amount_inventory";
+		$dbh->exec($sql);
+		//do_query($sql);
+		
+		$sql		= "UPDATE assetlist SET inventory=inventory + $amount_inventory where asset_id='$asset_id'";
+		$dbh->exec($sql);
+		//do_query($sql);
+		
+		$sql		= "UPDATE assetlist SET physical=physical + $amount_physical where asset_id='$asset_id'";
+		$dbh->exec($sql);
+		//do_query($sql);
+		
+		if ($is_donation == 0)
+		{	
+			$total_services 	= 0;
+			$total_inventory 	= 0;
+				
+			//error_log("is not a donation, is donation is 0");
+			$sql = "SELECT * FROM totals";
+			$query = mysql_query($sql);		
+			if (!$query) 
 			{
-				$total_services 	= $result['total_services'];
-				$total_inventory 	= $result['total_inventory'];
-			}
-			//echo "weighted: " . $weighted_val;
-			$service_units = $amount_inventory * $total_services / $total_inventory;
-			//echo "service units earned = $service_units";
-			$sql = "UPDATE members SET balance=balance+$service_units where member_id='$member_id'";
-			do_query($sql);
-			$balance = $balance + $service_units;
-			$sql = "UPDATE transactions SET balance='$balance' where journal_id='$ta_id'";
-			do_query($sql);
-			
-			$sql = "UPDATE totals SET total_services=total_services + $service_units";
-			do_query($sql);
-															
-		}
+				header("Location: ". $errorpage.urlencode("Query failed: ". mysql_error()));
+				
+			} else 
+			{
+				while ($result = mysql_fetch_array($query)) 
+				{
+					$total_services 	= $result['total_services'];
+					$total_inventory 	= $result['total_inventory'];
+				}
+				//echo "weighted: " . $weighted_val;
+				$service_units = $amount_inventory * $total_services / $total_inventory;
+				//echo "service units earned = $service_units";
+				$sql = "UPDATE members SET balance=balance+$service_units where member_id='$member_id'";
+				$dbh->exec($sql);
+				//do_query($sql);
+				$balance = $balance + $service_units;
+				$sql = "UPDATE transactions SET balance='$balance' where journal_id='$ta_id'";
+				//do_query($sql);
+				$dbh->exec($sql);
+				
+				$sql = "UPDATE totals SET total_services=total_services + $service_units";
+				//do_query($sql);
+				$dbh->exec($sql);
+																
+			} //else
+		
+		} //is donation
+		
+	$dbh->commit();	
+		
+	} catch (Exception $e)
+	{
+		$dbh->rollback();
+		header("Location: ".$errorpage.$e->getMessage() );
 	}
 ?>
 

@@ -28,7 +28,7 @@ if (!$result) {
 	{
 		$msg = "The database has already been imported! You can only import it once.";
 		//print $msg;
-		$redirectto = "error.php?error=$msg";
+		header("Location: ".$errorpage.$msg);
 	}
 	else 
 	{
@@ -48,15 +48,21 @@ class UWS_InitialImport
 	private $cell_id = "";
 	private $service_type = 0;
 	private $inventorize_type = 0;
-	private $consume_type = 0;
+	private $consume_type = 0;	
 		
 	function import()
 	{
 		global $redirectto;
+		//global $dbh;
+		
 		try
 		{	
 			//print "Starting import.<br>";
 			$htmlfile = file_get_contents($this->url);
+			
+			//no need for transactions here, as this is the initial import;
+			//if something fails, just delete the whole db and restart
+			//$dbh->beginTransaction(); 
 			
 			$this->init();
 			
@@ -89,8 +95,12 @@ class UWS_InitialImport
 			
 				$query 	= "UPDATE settings SET original_imported='1';";
 				$this->do_query($query);
+				
+				//$dbh->commit();
+				
 			} // if regexp matches
 		} catch (Exception $e) {
+			//$dbh->rollback();
 			$msg = $e->getMessage();
 			//print "Exception: ". $msg;
 			$redirectto = "error.php?error=" . $msg;
@@ -99,6 +109,7 @@ class UWS_InitialImport
 	
 	function init()
 	{
+		//global $dbh;
 		//print "Initialising...\n<br>";
 		$this->create_cell();
 		
@@ -107,24 +118,31 @@ class UWS_InitialImport
 		$result			= mysql_fetch_row($query);
 		$this->service_type = $result[0];
 		
+		
 		$sql			= "SELECT type_code FROM transaction_type where type_desc='Inventorization'";
 		$query			= mysql_query($sql);
 		$result			= mysql_fetch_row($query);
 		$this->inventorize_type = $result[0];
 		
+		
 		$sql			= "SELECT type_code FROM transaction_type where type_desc='Consume'";
 		$query			= mysql_query($sql);
 		$result			= mysql_fetch_row($query);	
 		$this->consume_type = $result[0];
+		
+		
 		//print "Done.\n<br>";
 	}
 	
 	function create_cell()
 	{
 		global $DEFAULT_CELL_ID;
+		//global $dbh;
+		
 		$cell_name = "OS";
 		$query = "INSERT INTO network VALUES('','$cell_name','')";
 		$this->cell_id = $this->do_query($query);
+		//$dbh->exec($query);
 		$DEFAULT_CELL_ID = $this->cell_id;
 	}
 	
@@ -145,33 +163,59 @@ class UWS_InitialImport
 			$desc = $link;
 			$link = "";
 		}
+	
+		try
+		{
+			//$dbh->beginTransaction();
 		 
-		$sql		= "SELECT balance FROM members where member_id='$member_id'";
-		$query		= mysql_query($sql);
-		$balance	= mysql_fetch_row($query);
-		$service_units = $factor * $lifetime; 		
-		$balance	= $service_units + $balance[0];
-		
-		
-		$sql 	= "INSERT INTO transactions VALUES ".
-			   		"('','$timestamp','$this->service_type','0','$member_id','$desc','$factor','$link','$balance')";
-	    //print $sql."<br><br>";
-		$ta_id 	= $this->do_query($sql);		
-		$sql 	= "INSERT INTO service VALUES('','$ta_id','','','$service','$lifetime')";
-		$srv_id = $this->do_query($sql);
-		
-		$sql	= "UPDATE transactions SET transaction_id='$srv_id' where journal_id='$ta_id'";
-		$this->do_query($sql);
-		
-		$sql	= "UPDATE totals SET total_services=total_services + $service_units";
-		$this->do_query($sql);
-		
-		$sql	= "UPDATE servicelist SET provided=provided + $service_units where service_id='$service'";
-		$this->do_query($sql);
-		
-		$sql	= "UPDATE members SET balance=balance + $service_units where member_id='$member_id'";
-		$this->do_query($sql);
-		//return $statement;
+			$sql		= "SELECT balance FROM members where member_id='$member_id'";
+			$query		= mysql_query($sql);
+			$balance	= mysql_fetch_row($query);
+			//$result = $dbh->query($sql)->fetch();
+			//$balance = $result['balance'];
+			
+			$service_units = $factor * $lifetime; 		
+			$balance	= $service_units + $balance[0];		
+	
+			
+			$sql 	= "INSERT INTO transactions VALUES ".
+				   		"('','$timestamp','$this->service_type','0','$member_id','$desc','$factor','$link','$balance')";
+		    //print $sql."<br><br>";
+			$ta_id 	= $this->do_query($sql);
+			//$dbh->exec($sql);
+			//$ta_id = $dbh->lastInsertId();
+					
+			$sql 	= "INSERT INTO service VALUES('','$ta_id','','','$service','$lifetime')";
+			$srv_id = $this->do_query($sql);
+			//$dbh->exec($sql);
+			//$srv_id = $dbh->lastInsertId();
+			
+			$sql	= "UPDATE transactions SET transaction_id='$srv_id' where journal_id='$ta_id'";
+			//$dbh->exec($sql);
+			$this->do_query($sql);
+			
+			$sql	= "UPDATE totals SET total_services=total_services + $service_units";
+			$this->do_query($sql);
+			//$dbh->exec($sql);
+			
+			$sql	= "UPDATE servicelist SET provided=provided + $service_units where service_id='$service'";
+			$this->do_query($sql);
+			//$dbh->exec($sql);
+			
+			$sql	= "UPDATE members SET balance=balance + $service_units where member_id='$member_id'";
+			$this->do_query($sql);
+			//$dbh->exec($sql);
+			
+			//$dbh->commit();
+			
+			//return $statement;
+		} catch (Exception $e)
+		{
+			global $errorpage;
+			//$dbh->rollback();
+			header("Location: ". $errorpage .$e->getMessage());
+		}
+ 		
 	}
 	
 	function create_inventory_statement($entry)
@@ -202,26 +246,50 @@ class UWS_InitialImport
 		$balance	= 0;
 		$link 		= "Ritual Beitrag";//$this->sanitize_string($entry[8]);
 		
-		$sql 		= "INSERT INTO transactions VALUES ".
-			   			"('','$timestamp','$this->inventorize_type','0','$member_id','','$factor','$link','$balance')";
-		//print $sql."<br><br>";
-		$ta_id 		= $this->do_query($sql);
-		$is_donation= 1;
-		//print "asset_id: ".$asset_id;							  
-		$sql 		= "INSERT INTO inventorize VALUES('','$ta_id','$asset_id','$is_donation','$amount_physical','$amount_inventory')";
-		$inv_id 	= $this->do_query($sql);
 		
-		$sql		= "UPDATE transactions SET transaction_id='$inv_id' where journal_id='$ta_id'";
-		$this->do_query($sql);
+		//$dbh->beginTransaction();
+		try 
+		{
+			$sql 		= "INSERT INTO transactions VALUES ".
+				   			"('','$timestamp','$this->inventorize_type','0','$member_id','','$factor','$link','$balance')";
+			//print $sql."<br><br>";
+			$ta_id 		= $this->do_query($sql);
+			//$dbh->exec($sql);
+			//$ta_id = $dbh->lastInsertId();
+			
+			$is_donation= 1;
+			
+			//print "asset_id: ".$asset_id;							  
+			$sql 		= "INSERT INTO inventorize VALUES('','$ta_id','$asset_id','$is_donation','$amount_physical','$amount_inventory')";
+			//$dbh->exec($sql);
+			$inv_id 	= $this->do_query($sql);
+			//$inv_id = $dbh->lastInsertId();
+			
+			$sql		= "UPDATE transactions SET transaction_id='$inv_id' where journal_id='$ta_id'";
+			$this->do_query($sql);
+			//$dbh->exec($sql);
+			
+			$sql		= "UPDATE totals SET total_inventory=total_inventory + $amount_inventory";
+			$this->do_query($sql);
+			//$dbh->exec($sql);
+			
+			$sql		= "UPDATE assetlist SET inventory=inventory + $amount_inventory where asset_id='$asset_id'";
+			$this->do_query($sql);
+			//$dbh->exec($sql);
+			
+			$sql		= "UPDATE assetlist SET physical=physical + $amount_physical where asset_id='$asset_id'";
+			$this->do_query($sql);
+			//$dbh->exec($sql);
+			
+			//$dbh->commit();
+			
+		} catch (Exception $e)
+		{	
+			global $errorpage;
+			//$dbh->rollback();
+			header("Location: ". $errorpage . $e->getMessage());
+		}
 		
-		$sql		= "UPDATE totals SET total_inventory=total_inventory + $amount_inventory";
-		$this->do_query($sql);
-		
-		$sql		= "UPDATE assetlist SET inventory=inventory + $amount_inventory where asset_id='$asset_id'";
-		$this->do_query($sql);
-		
-		$sql		= "UPDATE assetlist SET physical=physical + $amount_physical where asset_id='$asset_id'";
-		$this->do_query($sql);
 	}
 	
 	function create_consume_statement($entry)
@@ -242,34 +310,57 @@ class UWS_InitialImport
 		
 		//can't consume anything which hasn't been inventorized 
 		//-->insert_if_missing is inappropriate here!
-		//$unit = insert_if_missing($entry[4]); 
-		$sql 	= "INSERT INTO transactions VALUES ".
-			   		"('','$timestamp','$CONSUME_TYPE','0','$member_id','$desc','$factor','$link','$balance')";
-		$ta_id 	= do_query($sql);
-	
-		$sql 	= "INSERT INTO consume VALUES('','$date','$ta_id','$asset_id','$bid','$price')";
-		$bid_id = do_query($sql);
-	
-		$sql	= "UPDATE totals SET total_inventory=total_inventory - $price";
-		do_query($sql);
+		//$unit = insert_if_missing($entry[4]);
 		
-		$sql	= "UPDATE assetlist SET inventory=inventory - $price where asset_id='$asset_id'";
-		do_query($sql);
-	
-		$sql	= "UPDATE assetlist SET physical=physical - $bid where asset_id='$asset_id'";
-		do_query($sql);
+		try
+		{	
+			//$dbh->beginTransaction();	
+		 
+			$sql 	= "INSERT INTO transactions VALUES ".
+				   		"('','$timestamp','$CONSUME_TYPE','0','$member_id','$desc','$factor','$link','$balance')";
+			$ta_id 	= $this->do_query($sql);
+			//$dbh->exec($sql);
+			//$ta_id = $dbh->lastInsertId();
 		
-		$sql	= "UPDATE members SET balance=balance - $price where member_id='$member_id'";
-		do_query($sql);
-	
-		$sql 	= "SELECT balance FROM members WHERE member_id='$member_id'";
-		$query  = mysql_query($sql);
-		$result = mysql_fetch_row($query);
-		$new_balance = $result[0];
-	
-		$sql	= "UPDATE transactions SET transaction_id='$bid_id',balance='$new_balance' where journal_id='$ta_id'";
-		$this->do_query($sql);
+			$sql 	= "INSERT INTO consume VALUES('','$date','$ta_id','$asset_id','$bid','$price')";
+			$bid_id = $this->do_query($sql);
+			//$dbh->exec($sql);
+			//$bid_id = $dbh->lastInsertId();
 		
+			$sql	= "UPDATE totals SET total_inventory=total_inventory - $price";
+			do_query($sql);
+			//$dbh->exec($sql);
+			
+			$sql	= "UPDATE assetlist SET inventory=inventory - $price where asset_id='$asset_id'";
+			$this->do_query($sql);
+			//$dbh->exec($sql);
+		
+			$sql	= "UPDATE assetlist SET physical=physical - $bid where asset_id='$asset_id'";
+			$this->do_query($sql);
+			//$dbh->exec($sql);
+			
+			$sql	= "UPDATE members SET balance=balance - $price where member_id='$member_id'";
+			$this->do_query($sql);
+			//$dbh->exec($sql);
+		
+			$sql 	= "SELECT balance FROM members WHERE member_id='$member_id'";
+			$query  = mysql_query($sql);
+			$result = mysql_fetch_row($query);
+			//$result = $dbh->query($sql)->fetch();
+			$new_balance = $result[0];
+		
+			$sql	= "UPDATE transactions SET transaction_id='$bid_id',balance='$new_balance' where journal_id='$ta_id'";
+			$this->do_query($sql);
+			//$dbh->exec($sql);
+			
+			//$dbh->commit();
+			
+		} catch (Exception $e)
+		{
+			global $errorpage;
+			//$dbh->rollback();
+			header("Location: " .$errorpage.$e->getMessage());
+		}	
 	}
 	
 	function insert_if_missing_unit($name, $factor)

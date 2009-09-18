@@ -5,22 +5,33 @@
  * To change the template for this generated file go to
  * Window - Preferences - PHPeclipse - PHP - Code Templates
  */
- include "config.php";
+ //include "config.php";
  
  
  
  class DataAccessor {
- 		
+ 	
+ 	private $dbh = null;
+ 	
  	function init_db_connection()
  	{
- 		global $dbuser, $dbpass, $logger;
-		$dbh = new PDO("mysql:host=$hostname;dbname=$dbName", $dbuser, $dbpass, 
+ 		global $dbuser, $dbpass, $dbname, $logger;
+		$this->dbh = new PDO("mysql:host=$hostname;dbname=$dbname", $dbuser, $dbpass, 
       			array(PDO::ATTR_PERSISTENT => true));
       	
-      	$logger->log("DB connection successful", PEAR_LOG_INFO);      			
+      	//$logger->log("DB connection successful", PEAR_LOG_INFO);      			
+      	error_log("DB connection successful", PEAR_LOG_INFO);
   		  		
-  		$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  		$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  		$this->dbh->setAttribute(PDO::ATTR_AUTOCOMMIT,FALSE);
 		 		
  	}
+ 	
+ 	function get_connection()
+ 	{
+ 		return $this->dbh;
+ 	}
+ 	
+ 	
  }
 ?>

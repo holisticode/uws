@@ -36,27 +36,8 @@ try
 		
 	}
 	
-	//checking for the existence of the service should not be 
-	//necessary anymore, as services can only be added through the
-	//appropriate page
 	
-	//first check that the service exists; if not: add
-	//TODO: Check if user exists?
-//	$sql = "SELECT service FROM servicelist WHERE service = '$contribution'";
-//	$query = mysql_query($sql);
-//	$rows = mysql_num_rows($query);
-//	
-//	
-//	if ($rows == 0) {
-//		$date = time();
-//		$query = "INSERT into servicelist values ('','$date','$contribution','0','')";
-//		$result = mysql_query($query);
-//		if (!$result) {
-//			print("Query failed: " . mysql_error());
-//		} else {
-//			$user_1_journal_id = mysql_insert_id();
-//		}
-//	}
+	$dbh->beginTransaction();	
 	
 	$timestamp 	= time();
 	$service_id = get_service_id_from_name($contribution);
@@ -64,53 +45,70 @@ try
 	$sql 	= "INSERT INTO transactions VALUES ".
 		   		"('','$timestamp','$SERVICE_TYPE','0','$member_id','$desc','$factor','$link','0')";
     //print $sql."<br><br>";
-	$ta_id 	= do_query($sql);		
+	//$ta_id 	= do_query($sql);
+	$dbh->exec($sql);
+	$ta_id = $dbh->lastInsertId();
+			
 	$sql 	= "INSERT INTO service VALUES('','$ta_id','','','$service_id','$lifetime')";
-	$srv_id = do_query($sql);
+	//$srv_id = do_query($sql);
+	$dbh->exec($sql);
+	$srv_id = $dbh->lastInsertId();
 	
 	$sql	= "UPDATE transactions SET transaction_id='$srv_id' where journal_id='$ta_id'";
-	do_query($sql);
+	//do_query($sql);
+	$dbh->exec($sql);
 	
 	$sql	= "UPDATE members SET balance=balance + $service_units where member_id='$member_id'";
-	do_query($sql);
+	//do_query($sql);
+	$dbh->exec($sql);
 	
 	if (! $ta_has_receiver)
 	{
 		$sql	= "UPDATE totals SET total_services=total_services + $service_units";
-		do_query($sql);
+		//do_query($sql);
+		$dbh->exec($sql);
 	
 		$sql	= "UPDATE servicelist SET provided=provided + $service_units where service_id='$service'";
-		do_query($sql);
+		//do_query($sql);
+		$dbh->exec($sql);
 	}
 	else
 	{
 		$sql	= "UPDATE members SET balance=balance - $service_units where member_id='$receiver_id'";
-		do_query($sql);
+		//do_query($sql);
+		$dbh->exec($sql);
 	}
 	
 	
 	$sql 	= "SELECT balance FROM members WHERE member_id='$member_id'";
-	$query  = mysql_query($sql);
-	$result = mysql_fetch_row($query);
-	$new_balance = $result[0];
+	//$query  = mysql_query($sql);
+	//$result = mysql_fetch_row($query);
+	$result = $dbh->query($sql)->fetch();
+	$new_balance = $result['balance'];
 	
 	$sql	= "UPDATE transactions SET transaction_id='$srv_id',balance='$new_balance' where journal_id='$ta_id'";
-	do_query($sql);
-	
+	//do_query($sql);
+	$dbh->exec($sql);
 	
 	if ($ta_has_receiver)
 	{
 		$sql 	= "SELECT balance FROM members WHERE member_id='$receiver_id'";
-		$query  = mysql_query($sql);
-		$result = mysql_fetch_row($query);
-		$new_balance = $result[0];
+		//$query  = mysql_query($sql);
+		//$result = mysql_fetch_row($query);
+		$result = $dbh->query($sql)->fetch();
+		$new_balance = $result['balance'];
+		
 		
 		$sql	= "UPDATE service SET receiver_id='$receiver_id',receiver_balance='$new_balance' where journal_id='$srv_id'";
-		do_query($sql);
+		//do_query($sql);
+		$dbh->exec($sql);
+		
+		$dbh->commit();
 	}
 } catch (Exception $e)
 {
-	$msg = $e->getMessage();
+	$dbh->rollback();
+	$msg = $e->getMessage();	
 	$target = $errorpage.$msg;
 }
 ?>
