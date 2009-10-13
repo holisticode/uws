@@ -43,10 +43,10 @@ try
 		
 		$hour = time() + 3600;
 		$newpass = $_POST['newpass'];
-		$sql = "UPDATE members SET password='$newpass'";
+		$sql = "UPDATE members SET password='$newpass' WHERE member_id='$member_id'";
 		do_query($sql);
 		setcookie("Key_my_site", $_POST['newpass'] , $hour);			
-		$content = "<h1>". translate("uws:newpwdok"). "</h1>";
+		$content = "<h1>". translate("uws:newpwdok"). "</h1><br><br>";
 	
 	} // if
 }//try
@@ -70,7 +70,7 @@ catch (Exception $e)
 
 
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>Universal Wealth System UWS - <?php echo translate("uws:register") ?></title>
+<title>Universal Wealth System UWS - <?php echo translate("uws:changepwd") ?></title>
 <meta name="keywords" content="" />
 <meta name="description" content="" />
 <link rel="stylesheet" type="text/css" href="default.css" />
@@ -83,7 +83,7 @@ catch (Exception $e)
 	<div id="inner">
 
 		<?php include "header.php" ?>
-					<h3><?php echo translate("uws:register") ?></h3>
+					<h3><?php echo translate("uws:changepwd") ?></h3>
 					<div class="date">
 <?php echo date('d F Y') ?></div> <!-- div date -->
 				</div><!-- div header -->
