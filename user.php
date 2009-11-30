@@ -1,4 +1,18 @@
 <?php	
+/*
+ * UWS - Universal Wealth System
+ * user.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * This file displays a specific user's information:
+ * her balance and account history. It is basically the same as home.php
+ * but for another member, not the logged in one. The member's name is displayed
+ * in red color for this to be clear.
+ * 
+ * For an inline comment of code, refer to home.php, as the file is nearly identical.
+ */
 	session_start();
 	include "config.php";
 	
@@ -51,7 +65,7 @@
 				
 				<FONT COLOR="FF0000">
 				<?php echo $username ?></FONT></h7>
-				<div class="date"><?php echo date('d F Y') ?></div><!--date-->
+				<div class="date"><?php echo date('d F Y') ?></div><!--date--><br><br>
 				</div><!--header-->
 				<div class="content">
 <?php		
@@ -158,7 +172,22 @@
    		$ta_types[$key] = $value;
    	}   	
    	
+   	$sql 	= "SELECT transaction_id,receiver_balance FROM service WHERE receiver_id='$member_id'";
+   	$query 	= mysql_query($sql);
+   	$rarray = array();
+   	while($result = mysql_fetch_array($query))
+   	{
+   		$rarray[$result[0]] = $result[1];
+   	}
+   	
+   	$list = "";
    	$sql = "SELECT * FROM transactions WHERE member_id = '$member_id'";
+   	if (count($rarray) > 0) 
+   	{   	
+   		$list = implode(",",array_keys($rarray));
+   		$sql  = $sql." OR journal_id IN($list)";
+   	} 
+   	//echo "SQL: ".$sql;
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query))
    	{
@@ -170,8 +199,9 @@
 		$type_code 	= $result['transaction_type'];
 		$ta_type	= $ta_types[$type_code];
 		$transaction_id = $result['transaction_id'];
-		$transaction= get_transaction($type_code,$transaction_id);
-		$ta_id 		= $result['journal_id'];		
+		$ta_id 		= $result['journal_id'];
+		$transaction= get_transaction($type_code,$ta_id);
+				
 	    echo "<tr>";
         $date 		= $result['tstamp'];
         echo $td . date('Y M d H:i:s',$date) . $tde;
@@ -181,20 +211,23 @@
         $desc = $result['description'];
         echo $td . $desc . $tde;
         $balance = $result ['balance'];
+        if (array_key_exists($ta_id,$rarray))
+        {        	
+        	$balance = $rarray[$ta_id];
+        }
+        
         echo $td . $balance . $tde; 
         echo $td;
         echo '<a href="viewTransaction.php?taID=' . $ta_id .
 			 '&taType='.$type_code .'&detID='. $transaction_id .
 			 '&userID='.$member_id. 
-				'"><img src="/images/bid.png" border="0" alt="' .
+				'"><img src="images/bid.png" border="0" alt="' .
 				translate("uws:view") . '"></a>'; 
 		echo $tde;      
 	    echo "</tr>";
-		
-		$cnt++;
-   }
-   
-
+   		
+   		$cnt++;
+   	}
 ?>
   </table>
 				</div><!-- content-->			

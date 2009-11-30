@@ -1,4 +1,28 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * userList.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * This file displays a list of all users, their balance
+ * and their correspondent share in percent on the 
+ * total of services.
+ * 
+ * It currently uses a third party library to display a 
+ * pie chart of the shares per user. This library is a flash
+ * library, called through perc_chart.js. It is an opensource
+ * library with free license. However, clicking on the chart
+ * will lead the user to the originator of the library. 
+ * 
+ * The pie is of no use anyway as soon as a large numbers of users
+ * is in the system.
+ * 
+ * For the library to work, this file creates a users.xml every time
+ * it gets called. The library needs this users.xml in order to
+ * create the pie chart.
+ */
 	session_start();
 	include "config.php";
 ?>

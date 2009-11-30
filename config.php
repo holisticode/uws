@@ -1,4 +1,15 @@
-<?php 
+<?php
+/*
+ * UWS - Universal Wealth System
+ * config.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * Main configuration file. Watch out for the passwords!
+ * Also check depending on location, e.g. hosting requires
+ * different passwords and database names!
+ */
 $hostname="localhost"; 
 $dbuser="root"; 
 $dbpass="mysqlroot";

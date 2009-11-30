@@ -1,4 +1,17 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * placeBid.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * The original UWS design foresees auctions in order to manage
+ * offer and demand of goods and assets in the system. This file was
+ * meant to place a bid into the database. As auctions are disabled
+ * resp. not designed in the system, the file is currently superflous,
+ * but kept here for future development.
+ */
 	session_start();
 	include "config.php";
 ?>

@@ -1,4 +1,19 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * createCell.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * UWS evolves around the concept of a cell. Everyone can start a new cell.
+ * To start a new cell this file will be called. Especially when creating a new
+ * site and no users are registered yet, registering will redirect to this page first.
+ * 
+ * The page just displays an entry field for the cell's name resp. identification.
+ * For Willi's first UWS system, the cell is automatically created in the impord_db.php
+ * on import of the original entries from www.ressort.info/de/uws.htm. 
+ */
 	session_start();
 	include "config.php";
 ?>

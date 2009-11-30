@@ -1,4 +1,7 @@
-
+<!--
+This file is included from the main skeleton in any file as a navigational menu
+list of all lists which can be displayed.
+-->
 		
 			<h3><?php echo translate("uws:lists", $lang) ?></h3>
 			<div class="content">

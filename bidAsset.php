@@ -1,4 +1,33 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * bidAsset.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * This file handles the purchase of a certain amount of an asset.
+ * It will display a form with some numbers, like the physical amount of   
+ * that asset in the inventory, its value in inventory units, its
+ * price in service units (for the total amount of that asset), the maximum
+ * amount the current user can purchase (based on his own balance), this
+ * maximum amount in inventory units, and the current users saldo.
+ * There is a editable entry field displaying how much of the physical
+ * amount the user wants to purchase, per default filled with the maximum
+ * the user can buy. The last number displays the price in service units
+ * for the amount the user choses to purchase.
+ * 
+ * When the user edits the amount field, he needs to click somewhere outside the
+ * entry field in order for the numbers to get updated. Javascript functions
+ * determine then the new price for the chosen amount.
+ * 
+ * Currently in UWS when a member earned service units he has the right to
+ * access ("purchase") a correspondent amount of assets in inventory units,
+ * according to the UWS formula: KE * LG / IG = LE
+ * 
+ * When the user clicks on the "Bid" button, doConsume.php is called, which
+ * processes the bid/purchase/access/... of the asset.
+ */
 	session_start();
 	include "config.php";
 ?>
@@ -24,6 +53,8 @@
 		var last_factor = 0;
         
         function validate_form() {
+        	//validate the form on submit
+        	
         	var price		= parseInt(document.forms['bid'].elements["price"].value);
         	var balance		= parseInt(document.forms['bid'].elements["balance"].value);		        	
         	var max_bid		= parseInt(document.forms['bid'].elements["my_share_physical"].value);
@@ -47,6 +78,9 @@
         		return false;
         	}
         	else {
+        			//the following doesn't apply currently, but
+        			//is left here if auctions should be incorporated later
+        			
         		 	//check here if the factor has been changed
         			//if not, buy directly, otherwise an auction starts
         			//this means that the bid must be proportional to
@@ -58,26 +92,16 @@
         }
         
         function update_fields() {
+        	//the user changed the purchase amount
         	calc_fair_price();
-        	//calc_factor();
         	
-        }
-        function calc_factor2() {
-        	if (last_factor == 0)
-        	{
-        		var old_factor  = document.forms['bid'].elements["old_factor"].value;
-        		last_factor		= old_factor;
-        	}
-        	var same_factor_price_per_unit = document.forms['bid'].elements["same_factor_price_per_unit"].value;
-        	var new_price	= document.forms['bid'].elements["price"].value;
-        	var reference	= document.forms['bid'].elements["my_share_physical"].value;
-        	// var new_factor	= (new_price / (reference / 100)) / 100;
-        	var new_factor	= (last_factor * reference) / new_price;
-        	
-        	document.forms['bid'].elements["my_factor"].value = new_factor; 
         }
         
+        
         function calc_factor() {
+        	//This one is not needed currently, but left here
+        	//in case auctions should become reality in the future
+        	
         	var same_factor_price_per_unit = document.forms['bid'].elements["same_factor_price_per_unit"].value;
         	var new_price	= document.forms['bid'].elements["price"].value;
         	var bid_amount	= document.forms['bid'].elements["my_bid_amount"].value;
@@ -89,6 +113,10 @@
         }
         
         function calc_fair_price() {
+        	//calculate the new price for a purchase.
+        	//in UWS, currently, if a member has an amount of service units,
+        	//he has the right to get ("purchase") assets in corresponce of
+        	//its value in inventory units --> fair price
         	var bid 		= document.forms['bid'].elements["my_bid_amount"].value;
         	var total_cost 	= document.forms['bid'].elements["total_cost"].value;
         	var total_units = document.forms['bid'].elements["physical"].value;
@@ -129,6 +157,8 @@
    	{
    		die("Error: Query failed. ".mysql_error());
    	}
+   	
+   	//Get the data about the asset the user wants to "buy" from
    	while ($result = mysql_fetch_array($query)) 
    	{
    		$inventory 	= $result['inventory'];
@@ -137,13 +167,15 @@
    		$factor		= $result['last_factor'];
    	}
    	
+   	//get the users balance
    	$sql = "SELECT balance from members where member_id='" . $member_id . "'";
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query)) 
    	{
    		$balance = $result['balance'];
    	}
-   	   	
+   	
+   	//get the totals from the database, needed for price calculation
    	$sql   				= "SELECT total_services from totals";
    	$query 				= mysql_query($sql);
    	$total_services		= mysql_fetch_row($query);
@@ -152,18 +184,29 @@
    	$query 				= mysql_query($sql);
    	$total_inventory	= mysql_fetch_row($query);
    	
+   	//the UWS formula! 
+   	//calculate how much service units are needed to access all of the inventory
+   	//of that particular asset
    	$total_cost 		= $inventory * $total_services[0] / $total_inventory[0];
+   	//what's the ration in relation to the balance
    	$ratio				= $total_cost / $balance;
+   	//with that ration, calculate the user's share, his right to access,
+   	//on the physical amount of that particular asset
    	$my_share_physical	= $physical / $ratio;
+   	//the same share in inventory units
    	$my_share_inventory = $inventory / $ratio;
    	
+   	//My share can't be bigger than the total amount
    	if ($my_share_physical > $physical)
    	{
    		$my_share_physical = $physical;
    		$my_share_inventory = $inventory;
    	}
    	
+   	//Calculate the price in service units
    	$price = ($total_cost / $inventory) * $my_share_inventory;
+   	//price per unit if the factor is the same, used for auctions, but
+   	//disabled resp. not needed for now
    	$same_factor_price_per_unit = $physical / $total_cost;
 ?>
 					<h3><?php echo translate("uws:bid_asset") . ": " . $unit ?></h3>
@@ -198,9 +241,9 @@
          <tr>
           <td width="150" height="5"></td>
           <td height="5"></td>
-          <td></td>
-          
+          <td></td>  
         </tr>
+        <!--
         <tr>
           <td width="150" class="text"><?php echo translate("uws:factor") ?></td>
           <td width="10">&nbsp;</td>
@@ -211,8 +254,9 @@
           <td width="150" height="5"></td>
           <td height="5"></td>
           <td></td>
-          
-        </tr>        
+        </tr>
+        -->        
+        
         <tr>
           <td width="150" class="text"><?php echo translate("uws:total_cost") ?></td>
           <td width="10">&nbsp;</td>
@@ -299,8 +343,9 @@
           <td width="150" height="5"></td>
           <td height="5"></td>
           <td></td>
-          
         </tr>
+        
+        <!--
         <tr>
           <td width="150" class="text"><?php echo translate("uws:my_factor") ?></td>
           <td width="10">&nbsp;</td>
@@ -313,6 +358,7 @@
           <td></td>
           
         </tr>
+        -->
         
         <tr>
           <td colspan="3"><div align="left" class="text">

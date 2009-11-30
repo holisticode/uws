@@ -1,6 +1,20 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * saveStory.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * A chat protocol has been uploaded, and the user clicked save on 
+ * previewStory.php. The form is submitted to this file and the entries
+ * saved to the database.
+ */
 	include_once "config.php";
 	
+	//IMPORTANT: If this is set to 1, users which are in the chat protocol
+	//but do not exist in the database get inserted automatically
+	//otherwise they need to register first!
 	$INSERT_NEW_USERS = 0;
 	
 	$storyLink 	= $_POST['storyLink'];
@@ -8,6 +22,8 @@
 	$users 			= array();
 	$user_values 	= array();
 	$current_user	= null;
+	
+	//process all $POST variable fields
 	$factor_key		= "factor_";
 	$time_key		= "time_";
 	$user_key		= "user_";
@@ -65,7 +81,8 @@
 			if ($user_id == "") 
 			{
 				if ($INSERT_NEW_USERS)
-				{			
+				{
+					//user are automatically added to the database			
 					//neuer user
 					$timestamp = time();
 					$password  = md5($user."123");			
@@ -79,12 +96,14 @@
 					}
 				} else
 				{
+					//user need to register first!
 					$msg = translate("uws:user_not_existing");
 					throw new Exception($msg);
 				}
 			}
 			
 			$work 	= $data[$time_key];
+			$lifetime = $work;
 			$factor = $data[$factor_key];
 			$desc	= implode(" - ",array_keys($users));
 			
@@ -101,8 +120,11 @@
 			
 			try
 			{
+				//insert the chat values into the database and update
+				//all values accordingly (balances, totals)
 				$dbh->beginTransaction();
 				
+				//create a transaction entry
 				$sql 	= "INSERT INTO transactions VALUES ".
 					   		"('','$timestamp','$SERVICE_TYPE','0','$user_id','$desc','$factor','$link', $balance)";
 			    //print $sql."<br><br>";
@@ -110,31 +132,38 @@
 				$dbh->exec($sql);		
 				$ta_id = $dbh->lastInsertId();
 				
+				//with this id, create a service entry with it as a foreign key
 				$sql 	= "INSERT INTO service VALUES('','$ta_id','','','$service_id','$lifetime')";
 				$dbh->exec($sql);
 				//$srv_id = do_query($sql);
 				$srv_id = $dbh->lastInsertId();
 				
+				//write back the service entry id as a foreign key into the transaction entry
 				$sql	= "UPDATE transactions SET transaction_id='$srv_id' where journal_id='$ta_id'";
 				//do_query($sql);
 				$dbh->exec($sql);
 				
+				//update the total services
 				$sql	= "UPDATE totals SET total_services=total_services + $service_units ";
 				//do_query($sql);
 				$dbh->exec($sql);
 				
+				//update the total for the chat service
 				$sql	= "UPDATE servicelist SET provided=provided + $service_units where service_id='$service_id'";
 				//do_query($sql);
 				$dbh->exec($sql);
 				
+				//update the member's balance
 				$sql	= "UPDATE members SET balance=balance + $service_units where member_id='$user_id'";
 				//do_query($sql);
 				$dbh->exec($sql);
 				
+				//only if ALL STEPS SUCCEEDED, write the entries to the database...
 				$dbh->commit();
 				
 			} catch (Exception $e)
 			{
+				//...otherwise if something went wrong nothing gets written, the transaction failed!
 				$dbh->rollback();
 				throw new Exception($e->getMessage());
 			}		

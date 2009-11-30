@@ -1,4 +1,16 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * viewTransaction.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * This file displays a detailed information view on 
+ * single transactions. Depending on the transaction type,
+ * it will retrieve the according information from the
+ * correspondent database table.
+ */
 	session_start();
 	include "config.php";
 ?>
@@ -19,78 +31,6 @@
 <meta name="description" content="" />
 <link rel="stylesheet" type="text/css" href="default.css" />
 
-<script type="text/javascript">
-
-        function validate_form() {
-        	var price		= document.forms['bid'].elements["price"].value;
-        	var balance		= document.forms['bid'].elements["balance"].value;		        	
-        	var max_bid		= document.forms['bid'].elements["my_share_physical"].value;
-        	var bid 		= document.forms['bid'].elements["my_bid_amount"].value;
-        	if (bid == 0 || price ==0 || isNaN(bid) || isNaN(price))
-        	{
-        		var invalid= "<?php echo translate('uws:invalid_value')?>";
-        		alert(invalid);
-        		return false;
-        	}
-        	if (price > balance){
-        		var invalid= "<?php echo translate('uws:price_above_balance')?>";
-        		alert();
-        		return false;
-        	}
-        	if (bid >= max_bid)
-        	{
-        		var bid_too_high= "<?php echo translate('uws:bid_too_high')?>";
-        		alert(bid_too_high);
-        		return false;
-        	}
-        	else {
-        		return true;
-        	}
-        }
-        
-        function update_fields() {
-        	calc_fair_price();
-        	calc_factor();
-        	
-        }
-        function calc_factor2() {
-        	if (last_factor == 0)
-        	{
-        		var old_factor  = document.forms['bid'].elements["old_factor"].value;
-        		last_factor		= old_factor;
-        	}
-        	var same_factor_price_per_unit = document.forms['bid'].elements["same_factor_price_per_unit"].value;
-        	var new_price	= document.forms['bid'].elements["price"].value;
-        	var reference	= document.forms['bid'].elements["my_share_physical"].value;
-        	// var new_factor	= (new_price / (reference / 100)) / 100;
-        	var new_factor	= (last_factor * reference) / new_price;
-        	
-        	document.forms['bid'].elements["my_factor"].value = new_factor; 
-        }
-        
-        function calc_factor() {
-        	var same_factor_price_per_unit = document.forms['bid'].elements["same_factor_price_per_unit"].value;
-        	var new_price	= document.forms['bid'].elements["price"].value;
-        	var bid_amount	= document.forms['bid'].elements["my_bid_amount"].value;
-        	var new_price_per_unit = bid_amount / new_price;
-        	
-        	var new_factor	= same_factor_price_per_unit / new_price_per_unit;
-        	
-        	document.forms['bid'].elements["my_factor"].value = new_factor; 
-        }
-        
-        function calc_fair_price() {
-        	var bid 		= document.forms['bid'].elements["my_bid_amount"].value;
-        	var total_cost 	= document.forms['bid'].elements["total_cost"].value;
-        	var total_units = document.forms['bid'].elements["physical"].value;
-        	var unit_price	= total_cost / total_units;
-        	var bid_price	= bid * unit_price;
-        	
-        	document.forms['bid'].elements["price"].value = bid_price;
-        }
-
-
-</script>
 </head>
 
 <body>
@@ -119,6 +59,7 @@
   	$desc			= "";
   	$link			= "";
 		
+	//select the correspondent transaction, from the $POST ta_id variable
 	$sql = "SELECT * from transactions where journal_id='" . $ta_id . "'";
    	$query = mysql_query($sql);
    	while ($result = mysql_fetch_array($query)) 
@@ -131,20 +72,8 @@
    		$desc			= $result['description'];
         $link			= $result['link'];
    	}
-   	
-//   	$sql = "";
-//   	switch ($type_code) {
-//   		case $SERVICE_TYPE:
-//   			$sql = "SELECT * FROM service WHERE journal_id='$transaction_id'";
-//   			break;
-//   		case $INVENTORIZE_TYPE:
-//   			$sql = "SELECT * FROM inventorize WHERE journal_id='$transaction_id'";
-//   			break;
-//   		case $CONSUME_TYPE:
-//   			$sql = "SELECT * FROM consume WHERE journal_id='$transaction_id'";
-//   			break;
-//   	} 
-   	
+
+   		//select the appropriate transaction type
    		$sql  	= "SELECT type_desc FROM transaction_type WHERE type_code='$type_code'";
    		$query	= mysql_query($sql);
    		$result = mysql_fetch_row($query);
@@ -164,6 +93,7 @@
 			
 	<?php
 	switch ($type_code) {
+		//get the detail infos depending on the transaction type
    		case $SERVICE_TYPE:
    			$sql 	= "SELECT * FROM service WHERE journal_id='$transaction_id'";
 			$query 	= mysql_query($sql);
@@ -254,8 +184,8 @@
 		<table class="nicetable" cellspacing="0">
 		<tr>
 			<th scope="col" abbr="Donation"><?php echo translate("uws:donation") ?></th>			   
-			<th scope="col" abbr="Physical"><?php echo translate("uws:amount_physical") ?></th>
-			<th scope="col" abbr="Inventory"><?php echo translate("uws:amount_inventory") ?></th>
+			<th scope="col" abbr="Physical"><?php echo translate("uws:physical") ?></th>
+			<th scope="col" abbr="Inventory"><?php echo translate("uws:inventory") ?></th>
 			<th scope="col" abbr="Factor"><?php echo translate("uws:factor") ?></th>
 			<th scope="col" abbr="Link"><?php echo translate("uws:link") ?></th>
 		</tr>

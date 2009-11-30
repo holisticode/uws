@@ -2,6 +2,18 @@
 
 
 <?php
+/*
+ * UWS - Universal Wealth System
+ * doUpload.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * When a chat protocol is being uploaded, this file is called
+ */
+ 
+    //function to sanitize filenames, as chat protocols may contain dodgy
+    //characters
 	function sanitize_filename($filename, $forceextension="")
 	{
 		/*
@@ -41,11 +53,13 @@
 	$target = "";
  	$filesdir = "files";
 	
+	//get the uploaded file
 	$uploadFile = $_FILES['toProcess']['tmp_name'];
 	$filename   = $_FILES['toProcess']['name'];
 	
 	if (is_uploaded_file($uploadFile)) 
 	{
+		//parse the file
 		include_once "UNP_Parser.php";
 		$htmlfile = file_get_contents($uploadFile);
 		//print "Filename: " . $uploadFile . "\n<br>";		
@@ -54,6 +68,8 @@
 		$unp_parser = new UNP_Parser();
 		$users = $unp_parser->parse($htmlfile);
 		
+		//the file has been parsed and the values calculated
+		//to see the chat values, go to previewStory.php
 		$target = "previewStory.php?storyLink=".$myFile."&".$users;
 		
 		//print $target;

@@ -1,4 +1,17 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * bidList.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * The original UWS design foresees auctions in order to manage
+ * offer and demand of goods and assets in the system. This file was
+ * meant to display the list of running auctions. As auctions are disabled
+ * resp. not designed in the system, the file is currently superflous,
+ * but kept here for future development.
+ */
 	session_start();
 	include "config.php";	
 ?>
@@ -78,7 +91,7 @@
     		echo $td;
     		$unitID = $result['bidID'];
     		echo '<a href="bidDetail.php?bidID=' . $unitID . 
-				'"><img src="/images/bid.png" border="0" alt="' .
+				'"><img src="images/bid.png" border="0" alt="' .
 				translate("uws-bid") . '"></a>';
 			echo "</td>";
 			

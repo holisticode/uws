@@ -1,4 +1,15 @@
-<?php	
+<?php
+/*
+ * UWS - Universal Wealth System
+ * servicesList.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * This file displays a list of all services delivered to date with
+ * a total amount of service units delivered per service.
+ */
+ 	
 	session_start();
 	include "config.php";
 ?>

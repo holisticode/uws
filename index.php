@@ -1,4 +1,20 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * index.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * This is the portal file for the UWS, where the user arrives for login.
+ * Currently it is only displaying some dummy information and a simple
+ * username / login entry. 
+ * 
+ * The username is checked and if the user does not exist, a correspondent
+ * error message is shown. If the password is incorrect, another
+ * error message is shown. There is also a link to the register page.
+ */ 
+
 include "config.php";
 
 //Checks if there is a login cookie

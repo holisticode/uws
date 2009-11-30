@@ -1,4 +1,13 @@
-<?php	
+<?php
+/*
+ * UWS - Universal Wealth System
+ * register.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * Register a new user inside the UWS cell.
+ */	
 	session_start();
 	include "config.php";
 
@@ -8,6 +17,7 @@ try
 	
 	if (! $INITIALIZED)
 	{
+		//if not initialized yet, create a new cell first
 		$sql	= "SELECT COUNT(cell_id) FROM network";
 		$query  = mysql_query($sql);
 		$result = mysql_fetch_row($query);
@@ -17,7 +27,9 @@ try
 		$query  = mysql_query($sql);
 		$result = mysql_fetch_row($query);
 		$membnum= $result[0];
-			
+		
+		//if either there are no cells yet or there are not
+		//yet any members, redirect to createCell.php
 		if ( ($cellnum == 0) && ($membnum == 0))
 		{
 			header("Location: createCell.php");							

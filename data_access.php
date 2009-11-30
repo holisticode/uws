@@ -1,13 +1,25 @@
 <?php
 /*
- * Created on 11.09.2009
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
+ * UWS - Universal Wealth System
+ * data_access.php
+ * class DataAccessor
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * The db design of UWS is quite complex (and could be TODO:significantly improved).
+ * Also, when storing transactions a whole series of updates to different tables
+ * needs to be done. 
+ * 
+ * This mandates the usage of transactions-aware database commits in order to keep
+ * transaction integrity over the different updates. Only after a commit the whole
+ * series of updates will be written to the database. If something fails, a rollback
+ * is initiated and the transaction failed.
+ * 
+ * In PHP we can use PDO to achieve transaction integrity. This file initializes
+ * PDO and provides a global variables in order to access the PDO - aware object
+ * in order to perform transaction integrity.
  */
- //include "config.php";
- 
- 
  
  class DataAccessor {
  	

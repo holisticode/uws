@@ -1,4 +1,13 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * error.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * A standard error page displaying a user friendly error message.
+ */
 	session_start();
 	include "config.php";
 ?>
@@ -36,42 +45,6 @@
 	<?php 
 		$msg = $_GET['error'];
 		echo translate("uws:error") ."<br> ". $msg . "<br><br>" ?>
-<!--
-	<table class="nicetable" cellspacing="0">
-	<tr>
-
-       <th scope="col" abbr="Asset">Asset</th>
-       <th scope="col" abbr="Value">Value</th>
-   	</tr>
-<?php
-/*
-	include "config.php";
-	session_start();
-
-   	$sql = ("SELECT unit,inventory from units");
-   	$query = mysql_query($sql);
-   	$cnt=0;
-   	$tdnorm = '<td class="spec">';
-   	$tdalt  = '<td class="specalt">';
-   	$td = $tdnorm;
-   	while ($result = mysql_fetch_array($query)) {
-		if ($cnt%2 == 0) {
-			$td = $tdnorm;
-		} else {
-			$td = $tdalt;
-		}
-        	echo "<tr>";
-                $unit= $result['unit'];
-                $value= $result['inventory'];
-		echo $td . $unit . "</td>";
-		echo $td . $inventory . "</td>";
-        	echo "</tr>";
-	$cnt++;
-   }
-*/
-?>
-  </table>
--->
 				</div>			
 			</div>
 	

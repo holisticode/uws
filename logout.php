@@ -1,4 +1,14 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * logout.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * Logging out the user.
+ */ 
+
 $past = time() - 100;
 //this makes the time in the past to destroy the cookie
 setcookie("uws_login", gone, $past);

@@ -1,4 +1,26 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * createEntry.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * When a user has performed a service, be it for the community or for a
+ * specific user, a click on the correspondent action in the menu 
+ * ("Create new service delivery") will lead to this file.
+ * 
+ * The user enters the details of the service delivery, like the type of
+ * service (which needs to be created in createService.php first if not existing),
+ * the description, the amount of time in minutes, and the factor. Updating
+ * will calculate the service units according to the factor. The save button
+ * is active only after updating. Saving is done in saveEntry.php
+ * 
+ * If the user does not select a receiver for the service, the service is regarded
+ * as a community service and the user only gets credited his account. If a receiver
+ * gets selected, the amount gets credited on the user's account and debited on the
+ * receiver's account.
+ */
 	session_start();
 	include "config.php";
 ?>
@@ -20,6 +42,7 @@
 <link rel="stylesheet" type="text/css" href="default.css" />
 <script type="text/javascript">
         function saveStory() {
+        		//clicking on save will submit the form to saveEntry.php
                 document.story.action = "saveEntry.php";
                 document.story.submit();
         }
@@ -49,14 +72,17 @@
 	$user_1		= "";
 	$submit    		  = "disabled";
 	
+	//enable the submit button only if the form has been updated
 	if (isset($_POST['update']))
 	{
 		$user_1 	= $_POST['user_1'];	
 		$submit = "";
 	}
 	else {
+		//the form has not been updated, thus no receiver selected yet
 		$user_1		= $username;
 	}
+	
 	$factor_1 		= $_POST['factor_1'];
 	
 	$user_2			= $_POST['user_2'];
@@ -68,16 +94,21 @@
 	$selected_receiver = null;
 	$selected_service  = null;
 	
+	//the form has been updated and a receiver has been selected in 
+	//the dropdown list
 	if (isset($_POST['user_2']))
 	{
 		$selected_receiver = $_POST['user_2'];
 	}
+	
+	//the form has been updated and a service has been selected in the
+	//the dropdown list
 	if (isset($_POST['contribution']))
 	{
 		$selected_service = $_POST['contribution'];
 	}
 	
-	
+	//get all services in the system and add them to an array
 	$sql = "SELECT service FROM servicelist";
 	$query = mysql_query($sql);
 	$services_list = array();
@@ -85,13 +116,16 @@
 		array_push($services_list, current($result));
 	}
 	
+	//get all members in the system and add them to an array
 	$sql = "SELECT name FROM members";
 	$query = mysql_query($sql);
 	$user_list = array();
 	while ($result = mysql_fetch_array($query)) {
 		array_push($user_list, current($result));
 	}
-	
+	//add an empty entry to the members dropdown list,
+	//as there a service delivery might not need a member
+	//(community service)
 	array_unshift($user_list, "");
 	
 	
@@ -115,8 +149,10 @@
           <td><span class="text">
           <select name="user_2" size="1">
              <?php
+             //fill in the members dropdown list from an array filled further up
              foreach ($user_list as $user) {             	
              	echo "<option";
+             	//the form has been updated and a receiver had previously been selected.
              	if (! strcmp($user,$selected_receiver)) {
              		echo " selected>";
              	}
@@ -142,8 +178,10 @@
              <!-- <input name="contribution" type="text" id="contribution" value="<?php echo $contribution?>" size="30" /> -->
              <select name="contribution" size="1">
              <?php
+             //fill in the services dropdown list from an array further up
              foreach ($services_list as $service) {
              	echo "<option";
+             	//the form had been updated and a service had previously been selected
              	if (! strcmp($service,$selected_service)) {
              		echo " selected>";
              	}

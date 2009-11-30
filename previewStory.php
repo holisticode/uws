@@ -1,6 +1,19 @@
-<?php	
+<?php
+/*
+ * UWS - Universal Wealth System
+ * previewStory.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * After a chat protocol has been uploaded, this file is called to
+ * preview the values of the chat: how much who has been chatting.
+ * The factor can be entered and the earned service units calculated.
+ * 
+ * Saving calls saveStory.php where the entries are finally stored.
+ */	
 	session_start();
-	include "globals.php";
+	include "config.php";
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--

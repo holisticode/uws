@@ -1,4 +1,16 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * createService.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * When a user enters a new service delivery she chooses from a list
+ * of services in the system. To enter new services, call this file.
+ * 
+ * It just displays an entry field for the service's name and a description.
+ */
 	session_start();
 	include "config.php";
 ?>
@@ -18,14 +30,7 @@
 <meta name="keywords" content="" />
 <meta name="description" content="" />
 <link rel="stylesheet" type="text/css" href="default.css" />
-<script type="text/javascript">
-        function saveStory() {
-                document.story.action = "saveEntry.php";
-                document.story.submit();
-        }
 
-
-</script>
 </head>
 
 <body>

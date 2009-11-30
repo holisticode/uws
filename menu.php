@@ -1,4 +1,7 @@
-	
+<!--
+This file contains the top-level menu displayed in every page.
+Included from the main skeleton.
+-->	
 		<div id="menu">
 			<ul>
 				<li class="first"><a href="home.php">Home</a></li>

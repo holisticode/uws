@@ -9,18 +9,18 @@
 			<string>Reto</string>
 			<string>Lubor</string>
 			<string>Fridufritz</string>
-			<string>Fablife</string>
+			<string>Ruedi</string>
 		</row>
 		<row>
 			<string>% of Total Services</string>
-			<number>32.747</number>
-			<number>23.275</number>
+			<number>32.878</number>
+			<number>23.207</number>
 			<number>0</number>
 			<number>0</number>
-			<number>0.005</number>
+			<number>0.008</number>
 			<number>0.162</number>
-			<number>0.085</number>
-			<number>43.725</number>
+			<number>0.149</number>
+			<number>43.596</number>
 		</row>
 	</chart_data>
 	<chart_type>Pie</chart_type>

@@ -1,4 +1,19 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * createAsset.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * A new asset definition gets created for the UWS system.
+ * This file just displays the asset name and its description.
+ * On creation, it will initialize its physical and inventory units
+ * values to 0 in the database.
+ * 
+ * After creation, the asset is visible in the drop-down list
+ * in addToInventory.php
+ */
 	session_start();
 	include "config.php";
 ?>
@@ -18,14 +33,7 @@
 <meta name="keywords" content="" />
 <meta name="description" content="" />
 <link rel="stylesheet" type="text/css" href="default.css" />
-<script type="text/javascript">
-        function saveStory() {
-                document.story.action = "saveEntry.php";
-                document.story.submit();
-        }
 
-
-</script>
 </head>
 
 <body>
@@ -114,13 +122,14 @@
           <td width="5">&nbsp;</td>
           <td></td>
         </tr>
+        <!--
         <tr>
           <td width="50" class="text"><?php echo translate("uws:factor") ?></td>
           <td width="5">&nbsp;</td>
           <td><span class="text"><input name="factor" type="text" id="factor" value="<?php echo $factor ?>" size="30" />
           </span></td>
         </tr>
-    
+    -->
       <p>&nbsp;</p>
         <tr>
           <td colspan="4"><div align="left" class="text">

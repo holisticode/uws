@@ -1,4 +1,16 @@
 <?php
+/*
+ * UWS - Universal Wealth System
+ * CssParser.php
+ * Class CssParse
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * This file parses the @.css file in order to retrieve the user's colors
+ * for the chats. It is currently not used anymore, as chat colors are not
+ * integrated into the UWS.
+ */
 class CssParser {
 	
 function parse() {

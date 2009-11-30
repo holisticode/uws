@@ -1,4 +1,14 @@
-<?php	
+<?php
+/*
+ * UWS - Universal Wealth System
+ * changePwd.php
+ * GPL license
+ * author: Fabio Barone
+ * date: 30. Nov. 2009
+ * 
+ * Change the user's password. Displays an entry field
+ * for the old password, and two for the new one.
+ */	
 	session_start();
 	include "config.php";
 
