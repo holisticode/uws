@@ -29,6 +29,7 @@
 	
 	include "config.php";
 	
+	$asset_id	= get_asset_id_from_name($asset);
 	$member_id	= get_member_id_from_name($user);
 	$sql 		= "SELECT balance FROM members WHERE member_id='$member_id'";
 	$query		= mysql_query($sql);

@@ -8,8 +8,11 @@
  * date: 30. Nov. 2009
  * 
  * This file contains the class UNP_Parser, responsible for the
- * parsing of pidgin chat protocols into the Uws Norm Protocol (UNP),
- * a standard html format. It uses regular expressions to parse pidgin protocols.
+ * parsing of the Uws Norm Protocol (UNP), a standard html format. 
+ * It uses regular expressions to parse UNP files.
+ * 
+ * The parser parses the UNP file and calculates the chat time amount
+ * for each user in a chat.
  */
  
 class UNP_Parser 
