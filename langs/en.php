@@ -1,5 +1,5 @@
 <?php
-	$deutsch = array(
+	$english = array(
 		'uws:overview' => 'Overview',
 		'uws:overview-for' => 'Overview for ',
 		'uws:slogan' => 'Free yourself',
@@ -117,4 +117,4 @@
 		'uws:logout' => 'Logout',
 	);
 
-	add_translation("de",$deutsch);
+	add_translation("en",$english);

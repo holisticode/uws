@@ -135,9 +135,10 @@ try
 		//do_query($sql);
 		$dbh->exec($sql);
 		
-		//only, and only if ALL THESE STEPS SUCCEEDED, write to the database...
-		$dbh->commit();
+		
 	}
+	//only, and only if ALL THESE STEPS SUCCEEDED, write to the database...
+	$dbh->commit();
 } catch (Exception $e)
 {
 	//...otherwise roll back, something went wrong and the transaction failed!
